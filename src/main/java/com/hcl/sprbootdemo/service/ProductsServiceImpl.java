@@ -14,7 +14,7 @@ import com.hcl.sprbootdemo.entity.Products;
 import com.hcl.sprbootdemo.entity.Users;
 import com.hcl.sprbootdemo.exception.ResourceAlreadyExistsException;
 import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
-import com.hcl.sprbootdemo.payload.ProductDTO;
+
 
 import com.hcl.sprbootdemo.repository.ProductsRepository;
 import com.hcl.sprbootdemo.repository.UsersRepository;

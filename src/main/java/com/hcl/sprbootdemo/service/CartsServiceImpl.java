@@ -12,7 +12,7 @@ import com.hcl.sprbootdemo.exception.APIException;
 import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
 import com.hcl.sprbootdemo.payload.CartDTO;
 import com.hcl.sprbootdemo.payload.CartItemDTO;
-import com.hcl.sprbootdemo.payload.ProductDTO;
+
 import com.hcl.sprbootdemo.repository.CartItemRepository;
 import com.hcl.sprbootdemo.repository.CartsRepository;
 import com.hcl.sprbootdemo.repository.ProductsRepository;

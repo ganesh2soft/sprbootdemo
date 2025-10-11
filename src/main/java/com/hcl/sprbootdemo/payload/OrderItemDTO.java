@@ -1,8 +1,10 @@
 package com.hcl.sprbootdemo.payload;
 
+import com.hcl.sprbootdemo.entity.Products;
+
 public class OrderItemDTO {
 	private Long orderItemId;
-	private ProductDTO product;
+	private Products product;
 	private Integer quantity;
 	private double discount;
 	private double orderedProductPrice;
@@ -12,7 +14,7 @@ public class OrderItemDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public OrderItemDTO(Long orderItemId, ProductDTO product, Integer quantity, double discount,
+	public OrderItemDTO(Long orderItemId, Products product, Integer quantity, double discount,
 			double orderedProductPrice) {
 		super();
 		this.orderItemId = orderItemId;
@@ -30,11 +32,11 @@ public class OrderItemDTO {
 		this.orderItemId = orderItemId;
 	}
 
-	public ProductDTO getProduct() {
+	public Products getProduct() {
 		return product;
 	}
 
-	public void setProduct(ProductDTO product) {
+	public void setProduct(Products product) {
 		this.product = product;
 	}
 
