@@ -5,17 +5,17 @@ import java.util.List;
 
 import com.hcl.sprbootdemo.entity.Products;
 
-public class CartDTO {
+public class CartsDTO {
 	private Long cartId;
 	private Double totalPrice = 0.0;
 	private List<Products> products = new ArrayList<>();
 
-	public CartDTO() {
+	public CartsDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public CartDTO(Long cartId, Double totalPrice, List<Products> products) {
+	public CartsDTO(Long cartId, Double totalPrice, List<Products> products) {
 		super();
 		this.cartId = cartId;
 		this.totalPrice = totalPrice;

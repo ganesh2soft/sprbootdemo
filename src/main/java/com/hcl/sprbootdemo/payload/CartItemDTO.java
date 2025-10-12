@@ -1,26 +1,54 @@
 package com.hcl.sprbootdemo.payload;
 
+import com.hcl.sprbootdemo.entity.Products;
+
 public class CartItemDTO {
-	private Long productId;
+
+	private Long cartItemId;
+	private CartsDTO cart;
+	private Products product;
 	private Integer quantity;
+	private double discount;
+	private double productPrice;
 
 	public CartItemDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public CartItemDTO(Long productId, Integer quantity) {
+	public CartItemDTO(Long cartItemId, CartsDTO cart, Products product, Integer quantity, double discount,
+			double productPrice) {
 		super();
-		this.productId = productId;
+		this.cartItemId = cartItemId;
+		this.cart = cart;
+		this.product = product;
 		this.quantity = quantity;
+		this.discount = discount;
+		this.productPrice = productPrice;
 	}
 
-	public Long getProductId() {
-		return productId;
+	public Long getCartItemId() {
+		return cartItemId;
 	}
 
-	public void setProductId(Long productId) {
-		this.productId = productId;
+	public void setCartItemId(Long cartItemId) {
+		this.cartItemId = cartItemId;
+	}
+
+	public CartsDTO getCart() {
+		return cart;
+	}
+
+	public void setCart(CartsDTO cart) {
+		this.cart = cart;
+	}
+
+	public Products getProduct() {
+		return product;
+	}
+
+	public void setProduct(Products product) {
+		this.product = product;
 	}
 
 	public Integer getQuantity() {
@@ -29,6 +57,22 @@ public class CartItemDTO {
 
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
+	}
+
+	public double getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(double discount) {
+		this.discount = discount;
+	}
+
+	public double getProductPrice() {
+		return productPrice;
+	}
+
+	public void setProductPrice(double productPrice) {
+		this.productPrice = productPrice;
 	}
 
 }

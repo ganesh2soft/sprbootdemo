@@ -6,99 +6,74 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.hcl.sprbootdemo.entity.Products;
-import com.hcl.sprbootdemo.entity.Users;
+
 import com.hcl.sprbootdemo.exception.ResourceAlreadyExistsException;
 import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
-
-
+import com.hcl.sprbootdemo.payload.ProductDTO;
 import com.hcl.sprbootdemo.repository.ProductsRepository;
-import com.hcl.sprbootdemo.repository.UsersRepository;
+
 
 
 
 @Service
 @Transactional
-public class ProductsServiceImpl implements ProductsService {
+public class ProductsServiceImpl implements ProductsService{
 
 	@Autowired
-	ProductsRepository productRepository;
-
+	ProductsRepository productsRepository;
+	@Autowired
+	ModelMapper modelMapper;
 	
 
-	@Override
-	public Products saveProduct(Products product) {
+
+	public ProductDTO saveProduct(ProductDTO productDTO) {
 		// TODO Auto-generated method stub
-		return productRepository.save(product);
+
+		if(productsRepository.existsByProductNameIgnoreCase(productDTO.getProductName())) {
+			throw new ResourceAlreadyExistsException("Product", "productName", productDTO.getProductName());
+		}
+		Products product = modelMapper.map(productDTO, Products.class);
+		if(product.getDiscount() !=0) {
+		double specialPrice = product.getPrice() - ((product.getDiscount() * 0.01) * product.getPrice());
+		product.setSpecialPrice(specialPrice);
+		}else {
+			product.setSpecialPrice(product.getPrice());
+		}
+		Products savedProduct = productsRepository.save(product);
+		return modelMapper.map(savedProduct, ProductDTO.class);
 	}
 	
 	@Override
 	public void deleteProduct(Long productId) {
-		// TODO Auto-generated method stub
-		productRepository.deleteById(productId);
-	}
-
-	@Override
-	public List<Products> getAllProducts() {
-		// TODO Auto-generated method stub
-		return productRepository.findAll();
-	}
-
-	@Override
-	
-	public Products updateProduct(Long productId, Products productDetails) {
-        Products product = productRepository.findById(productId)
-            .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-
-        product.setCategory(productDetails.getCategory());
-        product.setProductName(productDetails.getProductName());
-        product.setBrandName(productDetails.getBrandName());
-        product.setQuantity(productDetails.getQuantity());
-        product.setPrice(productDetails.getPrice());
-        product.setDiscount(productDetails.getDiscount());
-        product.setSpecialPrice(productDetails.getSpecialPrice());
-
-        return productRepository.save(product);
-    }
-
-	@Override
-	public Products findProductById(Long productId) {
-        return productRepository.findById(productId)
-            .orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-    }
-	
-	
-	
-/*
-	@Override
-	public ProductDTO addProduct(ProductDTO productDTO) {
-		if(productRepository.existsByProductNameIgnoreCase(productDTO.getProductName())) {
-			throw new ResourceAlreadyExistsException("Product", "productName", productDTO.getProductName());
-		}
-		Product product = modelMapper.map(productDTO, Product.class);
-		Product savedProduct = productRepository.save(product);
-		return modelMapper.map(savedProduct, ProductDTO.class);
+		Products product = productsRepository.findById(productId)
+		//.orElseThrow(() -> new RuntimeException("PRoduct NOT found with ID :" + productId));
+		.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+		productsRepository.delete(product);
+		System.out.println("Product " + productId + " deleted successfully !!!");
+	//	return modelMapper.map(product, ProductDTO.class);
 	}
 
 	@Override
 	public List<ProductDTO> getAllProducts() {
-		List<Product> products = productRepository.findAll();
-		List<ProductDTO> ProductDTOS = products.stream().map(product -> {
+		List<Products> products = productsRepository.findAll();
+		List<ProductDTO> productDTOS = products.stream().map(product -> {
 			return modelMapper.map(product, ProductDTO.class);
 		}
 
 		).collect(Collectors.toList());
-		return ProductDTOS;
+		return productDTOS;
 	}
 
 	@Override
+	
 	public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
-		Optional<Product> productTobeUpdated = productRepository.findById(productId);
-		Product prod = null;
+		Optional<Products> productTobeUpdated = productsRepository.findById(productId);
+		Products prod = null;
 		if (productTobeUpdated.get() != null) {
 			prod = productTobeUpdated.get();
 			prod.setCategory(productDTO.getCategory());
@@ -110,34 +85,26 @@ public class ProductsServiceImpl implements ProductsService {
 			prod.setSpecialPrice(productDTO.getSpecialPrice());
 		}
 
-		Product savedProduct = productRepository.save(prod);
+		Products savedProduct = productsRepository.save(prod);
 		return modelMapper.map(savedProduct, ProductDTO.class);
 	}
 
 	@Override
-	public ProductDTO deleteProduct(Long productId) {
-		Product product = productRepository.findById(productId)
-				// .orElseThrow(() -> new RuntimeException("PRoduct NOT found with ID :" +
-				// productId));
+	public ProductDTO findProductById(Long productId) {
+        Products product = productsRepository.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
-		productRepository.delete(product);
-		System.out.println("Product " + productId + " deleted successfully !!!");
 		return modelMapper.map(product, ProductDTO.class);
-	}
 
-//	@Override
-//	public Product searchProductByKeyword(String keyword) {
-//
-//		return null;
-//	}
-//
+    }
+
+	
 	@Override
-	public ProductDTO getProductById(Long productId) {
-
-		Product product = productRepository.findById(productId)
-				.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+	public ProductDTO searchProductByKeyword(String keyword) {
+		Products product = productsRepository.findByProductNameContainingIgnoreCase(keyword)
+				//.orElseThrow(() -> new RuntimeException("No product found matching keyword: " + keyword));
+				.orElseThrow(() -> new ResourceNotFoundException("Product", "productKeyword",keyword));
 		return modelMapper.map(product, ProductDTO.class);
-
 	}
-*/
+	
+	
 }

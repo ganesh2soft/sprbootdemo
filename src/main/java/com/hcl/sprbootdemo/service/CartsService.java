@@ -1,23 +1,22 @@
 package com.hcl.sprbootdemo.service;
 
-import jakarta.transaction.Transactional;
 import java.util.List;
-import com.hcl.sprbootdemo.payload.CartDTO;
-import com.hcl.sprbootdemo.payload.CartItemDTO;
+
+import com.hcl.sprbootdemo.entity.Carts;
+import com.hcl.sprbootdemo.payload.CartsDTO;
 
 public interface CartsService {
-//	CartDTO addProductToCart(Long productId, Integer quantity);
+	public Carts createCart(Carts cart);
 
-//	List<CartDTO> getAllCarts();
+	public CartsDTO addProductToCart(Long productId, Integer quantity);
 
-//	CartDTO getCart(String emailId, Long cartId);
+	public List<CartsDTO> getAllCarts();
 
-//	@Transactional
-//	CartDTO updateProductQuantityInCart(Long productId, Integer quantity);
+	public CartsDTO getCart(String emailId, Long cartId);
 
-	//String deleteProductFromCart(Long cartId, Long productId);
+	public CartsDTO updateProductQuantityInCart(Long cartId, Long productId, Integer quantity);
 
-	//void updateProductInCarts(Long cartId, Long productId);
+	public void updateProductInCarts(Long cartId, Long productId);
 
-//	String createOrUpdateCartWithItems(List<CartItemDTO> cartItems);
+	public String deleteProductFromCart(Long cartId, Long productId);
 }

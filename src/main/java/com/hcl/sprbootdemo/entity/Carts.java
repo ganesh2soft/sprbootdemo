@@ -27,7 +27,7 @@ public class Carts {
 
 	@OneToOne
 	@JoinColumn(name = "user_id")
-	private Users users;
+	private Users user;
 
 	@OneToMany(mappedBy = "cart", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 			CascadeType.REMOVE }, orphanRemoval = true)
@@ -43,12 +43,12 @@ public class Carts {
 		this.cartId = cartId;
 	}
 
-	public Users getUsers() {
-		return users;
+	public Users getUser() {
+		return user;
 	}
 
-	public void setUsers(Users users) {
-		this.users = users;
+	public void setUser(Users user) {
+		this.user= user;
 	}
 
 	public List<CartItem> getCartItems() {
@@ -69,7 +69,7 @@ public class Carts {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cartId, cartItems, totalPrice, users);
+		return Objects.hash(cartId, cartItems, totalPrice, user);
 	}
 
 	@Override
@@ -82,19 +82,19 @@ public class Carts {
 			return false;
 		Carts other = (Carts) obj;
 		return Objects.equals(cartId, other.cartId) && Objects.equals(cartItems, other.cartItems)
-				&& Objects.equals(totalPrice, other.totalPrice) && Objects.equals(users, other.users);
+				&& Objects.equals(totalPrice, other.totalPrice) && Objects.equals(user, other.user);
 	}
 
 	@Override
 	public String toString() {
-		return "Cart [cartId=" + cartId + ", users=" + users + ", cartItems=" + cartItems + ", totalPrice=" + totalPrice
+		return "Cart [cartId=" + cartId + ", users=" + user + ", cartItems=" + cartItems + ", totalPrice=" + totalPrice
 				+ "]";
 	}
 
-	public Carts(Long cartId, Users users, List<CartItem> cartItems, Double totalPrice) {
+	public Carts(Long cartId, Users user, List<CartItem> cartItems, Double totalPrice) {
 		super();
 		this.cartId = cartId;
-		this.users = users;
+		this.user = user;
 		this.cartItems = cartItems;
 		this.totalPrice = totalPrice;
 	}
