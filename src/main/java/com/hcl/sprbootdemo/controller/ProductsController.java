@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hcl.sprbootdemo.entity.Products;
 
+import com.hcl.sprbootdemo.payload.ProductDTO;
 import com.hcl.sprbootdemo.service.ProductsService;
 
 @RestController
@@ -34,22 +34,22 @@ public class ProductsController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/addproducts")
-	public ResponseEntity<Products> addProduct(@RequestBody Products products) {
+	public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO) {
 		System.out.println("Control came to add prdt");
-		Products savedProduct = productsService.saveProduct(products);
-		return new ResponseEntity<Products>(savedProduct, HttpStatus.CREATED);
+		ProductDTO savedProduct = productsService.saveProduct(productDTO);
+		return new ResponseEntity<ProductDTO>(savedProduct, HttpStatus.CREATED);
 
 	}
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/get/{id}")
-	public Products getProduct(@PathVariable Long id) {
+	public ProductDTO getProduct(@PathVariable Long id) {
 		return productsService.findProductById(id);
 	}
 
 	// @PreAuthorize("hasRole('ROLE_ADMIN')")
 	@GetMapping("/getall")
-	public List<Products> getAllProducts() {
+	public List<ProductDTO> getAllProducts() {
 		return productsService.getAllProducts();
 	}
 
@@ -62,7 +62,7 @@ public class ProductsController {
 
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PutMapping("/updateproducts/{id}")
-	public Products updateProduct(@PathVariable Long id, @RequestBody Products product) {
+	public ProductDTO updateProduct(@PathVariable Long id, @RequestBody ProductDTO product) {
 		return productsService.updateProduct(id, product);
 	}
 

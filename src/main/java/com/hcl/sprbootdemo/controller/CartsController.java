@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.hcl.sprbootdemo.entity.Carts;
 import com.hcl.sprbootdemo.payload.CartsDTO;
+import com.hcl.sprbootdemo.payload.MessageResponse;
 import com.hcl.sprbootdemo.payload.CartItemDTO;
 import com.hcl.sprbootdemo.repository.CartsRepository;
 import com.hcl.sprbootdemo.service.CartsService;
@@ -23,10 +24,11 @@ public class CartsController {
 	public String helloFn() {
 		return "Cart Controller response!";
 	}
-	addProductToCart
-	@PostMapping("/products/{productId}/quantity/{quantity}")
-    public ResponseEntity<CartsDTO> addProductToCart(@PathVariable Long productId, @PathVariable Integer quantity) {
-        CartsDTO cartDTO = cartsService.addProductToCart(productId, quantity);
+	
+	@PostMapping("/addprod2cart/products/{productId}/quantity/{quantity}")
+    public ResponseEntity<CartsDTO> addProductToCartfn(@PathVariable Long productId, @PathVariable Integer quantity) {
+       
+       CartsDTO cartDTO= cartsService.addProductsToCart(productId, quantity);
         return new ResponseEntity<>(cartDTO, HttpStatus.CREATED);
     }
 

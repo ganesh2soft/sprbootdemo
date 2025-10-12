@@ -6,56 +6,50 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.hcl.sprbootdemo.entity.Products;
-
 import com.hcl.sprbootdemo.exception.ResourceAlreadyExistsException;
 import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
 import com.hcl.sprbootdemo.payload.ProductDTO;
 import com.hcl.sprbootdemo.repository.ProductsRepository;
 
-
-
-
 @Service
-@Transactional
-public class ProductsServiceImpl implements ProductsService{
+public class ProdServiceImpl implements ProductsService {
 
-	@Autowired
-	ProductsRepository productsRepository;
 	@Autowired
 	ModelMapper modelMapper;
+	@Autowired
+	ProductsRepository productsRepository;
 	
 
-
+	@Override
 	public ProductDTO saveProduct(ProductDTO productDTO) {
 		// TODO Auto-generated method stub
 
-		if(productsRepository.existsByProductNameIgnoreCase(productDTO.getProductName())) {
+		if (productsRepository.existsByProductNameIgnoreCase(productDTO.getProductName())) {
 			throw new ResourceAlreadyExistsException("Product", "productName", productDTO.getProductName());
 		}
 		Products product = modelMapper.map(productDTO, Products.class);
-		if(product.getDiscount() !=0) {
-		double specialPrice = product.getPrice() - ((product.getDiscount() * 0.01) * product.getPrice());
-		product.setSpecialPrice(specialPrice);
-		}else {
+		if (product.getDiscount() != 0) {
+			double specialPrice = product.getPrice() - ((product.getDiscount() * 0.01) * product.getPrice());
+			product.setSpecialPrice(specialPrice);
+		} else {
 			product.setSpecialPrice(product.getPrice());
 		}
 		Products savedProduct = productsRepository.save(product);
 		return modelMapper.map(savedProduct, ProductDTO.class);
 	}
-	
+
 	@Override
 	public void deleteProduct(Long productId) {
 		Products product = productsRepository.findById(productId)
-		//.orElseThrow(() -> new RuntimeException("PRoduct NOT found with ID :" + productId));
-		.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
+				// .orElseThrow(() -> new RuntimeException("PRoduct NOT found with ID :" +
+				// productId));
+				.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 		productsRepository.delete(product);
 		System.out.println("Product " + productId + " deleted successfully !!!");
-	//	return modelMapper.map(product, ProductDTO.class);
+		// return modelMapper.map(product, ProductDTO.class);
 	}
 
 	@Override
@@ -70,7 +64,6 @@ public class ProductsServiceImpl implements ProductsService{
 	}
 
 	@Override
-	
 	public ProductDTO updateProduct(Long productId, ProductDTO productDTO) {
 		Optional<Products> productTobeUpdated = productsRepository.findById(productId);
 		Products prod = null;
@@ -91,20 +84,19 @@ public class ProductsServiceImpl implements ProductsService{
 
 	@Override
 	public ProductDTO findProductById(Long productId) {
-        Products product = productsRepository.findById(productId)
+		Products product = productsRepository.findById(productId)
 				.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 		return modelMapper.map(product, ProductDTO.class);
 
-    }
+	}
 
-	
 	@Override
 	public ProductDTO searchProductByKeyword(String keyword) {
 		Products product = productsRepository.findByProductNameContainingIgnoreCase(keyword)
-				//.orElseThrow(() -> new RuntimeException("No product found matching keyword: " + keyword));
-				.orElseThrow(() -> new ResourceNotFoundException("Product", "productKeyword",keyword));
+				// .orElseThrow(() -> new RuntimeException("No product found matching keyword: "
+				// + keyword));
+				.orElseThrow(() -> new ResourceNotFoundException("Product", "productKeyword", keyword));
 		return modelMapper.map(product, ProductDTO.class);
 	}
-	
-	
+
 }

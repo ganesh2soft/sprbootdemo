@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.hcl.sprbootdemo.entity.Products;
 
-public class CartsDTO {
+public class  CartsDTO{
 	private Long cartId;
 	private Double totalPrice = 0.0;
 	private List<Products> products = new ArrayList<>();
