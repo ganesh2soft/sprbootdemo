@@ -5,11 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.hcl.sprbootdemo.entity.Carts;
 import com.hcl.sprbootdemo.payload.CartsDTO;
 import com.hcl.sprbootdemo.payload.MessageResponse;
-import com.hcl.sprbootdemo.payload.CartItemDTO;
-import com.hcl.sprbootdemo.repository.CartsRepository;
 import com.hcl.sprbootdemo.service.CartsService;
 
 import java.util.List;
@@ -32,7 +29,7 @@ public class CartsController {
         return new ResponseEntity<>(cartDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping
+    @GetMapping("/getcarts")
     public ResponseEntity<List<CartsDTO>> getCarts() {
         List<CartsDTO> cartDTOs = cartsService.getAllCarts();
         return new ResponseEntity<>(cartDTOs, HttpStatus.OK);

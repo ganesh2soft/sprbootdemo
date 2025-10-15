@@ -3,7 +3,7 @@ package com.hcl.sprbootdemo.payload;
 import com.hcl.sprbootdemo.entity.Category;
 //POJO   -- Plain Old Java Object
 public class ProductDTO {
-	private Long id;
+	private Long productId;
 	private Category category;
 	private String productName;
 	private String brandName;
@@ -17,10 +17,10 @@ public class ProductDTO {
 		// TODO Auto-generated constructor stub
 	}
 
-	public ProductDTO(Long id, Category category, String productName, String brandName, Integer quantity, double price,
+	public ProductDTO(Long productId, Category category, String productName, String brandName, Integer quantity, double price,
 			double discount, double specialPrice) {
 		super();
-		this.id = id;
+		this.productId = productId;
 		this.category = category;
 		this.productName = productName;
 		this.brandName = brandName;
@@ -30,12 +30,12 @@ public class ProductDTO {
 		this.specialPrice = specialPrice;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getproductId() {
+		return productId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setproductId(Long productId) {
+		this.productId= productId;
 	}
 
 	public Category getCategory() {
@@ -96,7 +96,7 @@ public class ProductDTO {
 
 	@Override
 	public String toString() {
-		return "Product [id=" + id + ", category=" + category + ", productName=" + productName + ", brandName="
+		return "Product [productId=" + productId + ", category=" + category + ", productName=" + productName + ", brandName="
 				+ brandName + ", quantity=" + quantity + ", price=" + price + ", discount=" + discount
 				+ ", specialPrice=" + specialPrice + "]";
 	}

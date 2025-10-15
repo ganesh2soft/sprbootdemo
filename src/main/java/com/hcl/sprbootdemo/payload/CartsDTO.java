@@ -3,19 +3,19 @@ package com.hcl.sprbootdemo.payload;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hcl.sprbootdemo.entity.Products;
+
 
 public class  CartsDTO{
 	private Long cartId;
 	private Double totalPrice = 0.0;
-	private List<Products> products = new ArrayList<>();
+	private List<ProductDTO> products = new ArrayList<>();
 
 	public CartsDTO() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public CartsDTO(Long cartId, Double totalPrice, List<Products> products) {
+	public CartsDTO(Long cartId, Double totalPrice, List<ProductDTO> products) {
 		super();
 		this.cartId = cartId;
 		this.totalPrice = totalPrice;
@@ -38,11 +38,11 @@ public class  CartsDTO{
 		this.totalPrice = totalPrice;
 	}
 
-	public List<Products> getProducts() {
+	public List<ProductDTO> getProducts() {
 		return products;
 	}
 
-	public void setProducts(List<Products> products) {
+	public void setProducts(List<ProductDTO> products) {
 		this.products = products;
 	}
 

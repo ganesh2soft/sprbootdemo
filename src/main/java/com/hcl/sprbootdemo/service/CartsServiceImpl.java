@@ -13,14 +13,13 @@ import com.hcl.sprbootdemo.entity.CartItem;
 import com.hcl.sprbootdemo.entity.Carts;
 import com.hcl.sprbootdemo.entity.Products;
 import com.hcl.sprbootdemo.exception.APIException;
-import com.hcl.sprbootdemo.exception.OutOfStockException;
 import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
 import com.hcl.sprbootdemo.payload.CartsDTO;
 import com.hcl.sprbootdemo.payload.ProductDTO;
 import com.hcl.sprbootdemo.repository.CartItemRepository;
 import com.hcl.sprbootdemo.repository.CartsRepository;
 import com.hcl.sprbootdemo.repository.ProductsRepository;
-
+import com.hcl.sprbootdemo.security.AuthUtil;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -38,6 +37,8 @@ public class CartsServiceImpl implements CartsService {
 
 	@Autowired
 	private ModelMapper modelMapper;
+	@Autowired
+    private AuthUtil authUtil;
 
 	@Override
 	public CartsDTO addProductsToCart(Long productId, Integer quantity) {
@@ -76,7 +77,7 @@ public class CartsServiceImpl implements CartsService {
         cart.setTotalPrice(cart.getTotalPrice() + (product.getSpecialPrice() * quantity));
         cartRepository.save(cart);
 
-        CartsDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+        CartsDTO cartDTO = modelMapper.map(cart, CartsDTO.class);
 
         List<CartItem> cartItems = cart.getCartItems();
 
@@ -93,7 +94,7 @@ public class CartsServiceImpl implements CartsService {
         }
 
         List<CartsDTO> cartDTOs = carts.stream().map(cart -> {
-            CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+            CartsDTO cartDTO = modelMapper.map(cart, CartsDTO.class);
 
             List<ProductDTO> products = cart.getCartItems().stream()
                     .map(p -> modelMapper.map(p.getProduct(), ProductDTO.class)).collect(Collectors.toList());
@@ -114,9 +115,9 @@ public class CartsServiceImpl implements CartsService {
         Long cartId = cartRepository.findCartByEmail(authUtil.loggedInEmail()).getCartId();
         Carts cart = cartRepository.findCartByEmailAndCartId(loggedInEmail, cartId);
         if (cart == null) {
-            throw new ResourceNotFoundException(String.format("Cart not found with ID: %d", cartId));
+            throw new ResourceNotFoundException(String.format("Cart not found with ID: %d", cartId), cartId);
         }
-        CartsDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+        CartsDTO cartDTO = modelMapper.map(cart, CartsDTO.class);
         cart.getCartItems().forEach(c ->
                 c.getProduct().setQuantity(c.getQuantity()));
         List<ProductDTO> products = cart.getCartItems().stream()
@@ -135,10 +136,10 @@ public class CartsServiceImpl implements CartsService {
         Long cartId = userCart.getCartId();
 
         Carts cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Cart not found with ID: %d", cartId)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Cart not found with ID: %d", cartId), cartId));
 
         Products product = productsRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Product not found with ID: %d", productId)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Product not found with ID: %d", productId), productId));
 
         if (product.getQuantity() == 0) {
             throw new APIException(product.getProductName() + " is not available");
@@ -179,7 +180,7 @@ public class CartsServiceImpl implements CartsService {
         }
 
 
-        CartsDTO cartDTO = modelMapper.map(cart, CartDTO.class);
+        CartsDTO cartDTO = modelMapper.map(cart, CartsDTO.class);
 
         List<CartItem> cartItems = cart.getCartItems();
 
@@ -199,14 +200,16 @@ public class CartsServiceImpl implements CartsService {
     private Carts createCart() {
         Carts userCart = cartRepository.findCartByEmail(authUtil.loggedInEmail());
         if (userCart != null) {
+        	System.out.println("inside if condition in create create");
+        	
             return userCart;
         }
 
-        Carts cart = new Cart();
+        Carts cart = new Carts();
         cart.setTotalPrice(0.00);
         cart.setUser(authUtil.loggedInUser());
         Carts newCart = cartRepository.save(cart);
-
+        System.out.println("New cart"+newCart);
         return newCart;
     }
 
@@ -215,12 +218,12 @@ public class CartsServiceImpl implements CartsService {
     @Override
     public String deleteProductFromCart(Long cartId, Long productId) {
         Carts cart = cartRepository.findById(cartId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Cart not found with ID: %d", cartId)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Cart not found with ID: %d", cartId), cartId));
 
         CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(cartId, productId);
 
         if (cartItem == null) {
-            throw new ResourceNotFoundException(String.format("Product not found with ID: %d", productId,cartId));
+            throw new ResourceNotFoundException(String.format("Product not found with ID: %d", productId), productId);
         }
 
         cart.setTotalPrice(cart.getTotalPrice() -
@@ -233,7 +236,7 @@ public class CartsServiceImpl implements CartsService {
 
     @Override
     public void updateProductInCarts(Long cartId, Long productId) {
-        Cart cart = cartRepository.findById(cartId)
+        Carts cart = cartRepository.findById(cartId)
                 .orElseThrow(() -> new ResourceNotFoundException("Cart", "cartId", cartId));
 
         Products product = productsRepository.findById(productId)

@@ -36,7 +36,7 @@ public class Orders {
 
 	    @OneToOne
 	    @JoinColumn(name = "payment_id")
-	    private Payment payment;
+	    private Payments payment;
 
 	    private Double totalAmount;
 	    private String orderStatus;
@@ -75,11 +75,11 @@ public class Orders {
 			this.orderDate = orderDate;
 		}
 
-		public Payment getPayment() {
+		public Payments getPayment() {
 			return payment;
 		}
 
-		public void setPayment(Payment payment) {
+		public void setPayment(Payments payment) {
 			this.payment = payment;
 		}
 
@@ -120,7 +120,7 @@ public class Orders {
 		}
 
 		public Orders(Long orderId, @Email String email, List<OrderItem> orderItems, LocalDate orderDate,
-				Payment payment, Double totalAmount, String orderStatus, String address) {
+				Payments payment, Double totalAmount, String orderStatus, String address) {
 			super();
 			this.orderId = orderId;
 			this.email = email;

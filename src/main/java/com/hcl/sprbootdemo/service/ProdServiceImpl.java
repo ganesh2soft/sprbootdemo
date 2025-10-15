@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.hcl.sprbootdemo.entity.Products;
-import com.hcl.sprbootdemo.exception.ResourceAlreadyExistsException;
 import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
 import com.hcl.sprbootdemo.payload.ProductDTO;
 import com.hcl.sprbootdemo.repository.ProductsRepository;
@@ -27,9 +26,9 @@ public class ProdServiceImpl implements ProductsService {
 	public ProductDTO saveProduct(ProductDTO productDTO) {
 		// TODO Auto-generated method stub
 
-		if (productsRepository.existsByProductNameIgnoreCase(productDTO.getProductName())) {
-			throw new ResourceAlreadyExistsException("Product", "productName", productDTO.getProductName());
-		}
+		//if (productsRepository.existsByProductNameIgnoreCase(productDTO.getProductName())) {
+	//		throw new ResourceAlreadyExistsException("Product", "productName", productDTO.getProductName());
+		//}
 		Products product = modelMapper.map(productDTO, Products.class);
 		if (product.getDiscount() != 0) {
 			double specialPrice = product.getPrice() - ((product.getDiscount() * 0.01) * product.getPrice());

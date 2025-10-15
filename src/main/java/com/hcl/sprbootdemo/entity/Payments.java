@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "payments")
 
-public class Payment {
+public class Payments {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +28,7 @@ public class Payment {
     private String pgName;
 
 
-    public Payment(String paymentMethod, String pgPaymentId, String pgStatus,
+    public Payments(String paymentMethod, String pgPaymentId, String pgStatus,
                    String pgResponseMessage, String pgName) {
         this.paymentMethod = paymentMethod;
         this.pgPaymentId = pgPaymentId;

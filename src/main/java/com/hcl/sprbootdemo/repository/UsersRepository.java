@@ -10,4 +10,6 @@ import com.hcl.sprbootdemo.entity.Users;
 public interface UsersRepository extends JpaRepository<Users, Long> {
 
 	public Users findUsersByEmail(String email);
+
+	
 }

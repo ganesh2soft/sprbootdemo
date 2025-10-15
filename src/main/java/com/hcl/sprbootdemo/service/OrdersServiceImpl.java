@@ -13,7 +13,7 @@ import com.hcl.sprbootdemo.entity.Carts;
 import com.hcl.sprbootdemo.entity.CartItem;
 import com.hcl.sprbootdemo.entity.Orders;
 import com.hcl.sprbootdemo.entity.OrderItem;
-import com.hcl.sprbootdemo.entity.Payment;
+import com.hcl.sprbootdemo.entity.Payments;
 import com.hcl.sprbootdemo.entity.Products;
 import com.hcl.sprbootdemo.exception.APIException;
 import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
@@ -55,7 +55,40 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Autowired
     ProductsRepository productRepository;
+    /*
+    public List<OrderDTO> getOrdersByEmail(String email) {
+        List<Orders> orders = ordersRepository.findByEmail(email);
 
+        return orders.stream()
+            .map(this::convertToDTO)
+            .collect(Collectors.toList());
+    }
+/*
+    private OrderDTO convertToDTO(Orders order) {
+        OrderDTO dto = new OrderDTO();
+        dto.setOrderId(order.getOrderId());
+        dto.setEmail(order.getEmail());
+        dto.setOrderDate(order.getOrderDate());
+        dto.setOrderStatus(order.getOrderStatus());
+        dto.setTotalAmount(order.getTotalAmount());
+        dto.setAddress(order.getAddress());
+        if (order.getPayment() != null) {
+            dto.setPaymentId(order.getPayment().getPaymentId());
+        }
+
+        dto.setItems(order.getOrderItems().stream().map(item -> {
+            OrderItemDTO itemDTO = new OrderItemDTO();
+            itemDTO.setProductName(item.getProduct().getProductName());
+            itemDTO.setQuantity(item.getQuantity());
+            itemDTO.setPrice(item.getPrice());
+            return itemDTO;
+        }).collect(Collectors.toList()));
+
+        return dto;
+    }
+
+    
+    
 //    @Autowired
 //    AuthUtil authUtil;
 /*
@@ -192,5 +225,11 @@ public class OrdersServiceImpl implements OrdersService {
 
 	
 */
+
+	@Override
+	public List<OrderDTO> getOrdersByEmail(String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

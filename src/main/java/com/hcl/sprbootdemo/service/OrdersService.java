@@ -1,9 +1,8 @@
 package com.hcl.sprbootdemo.service;
 
-import com.hcl.sprbootdemo.payload.OrderDTO;
-import com.hcl.sprbootdemo.payload.OrderResponse;
+import java.util.List;
 
-import jakarta.transaction.Transactional;
+import com.hcl.sprbootdemo.payload.OrderDTO;
 
 public interface OrdersService {
   //  @Transactional
@@ -14,4 +13,5 @@ public interface OrdersService {
  //   OrderDTO updateOrder(Long orderId, String status);
 
    // OrderResponse getAllSellerOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
+	public List<OrderDTO> getOrdersByEmail(String email);
 }

@@ -2,16 +2,10 @@ package com.hcl.sprbootdemo.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
-import com.hcl.sprbootdemo.config.AppConstants;
 import com.hcl.sprbootdemo.payload.OrderDTO;
-import com.hcl.sprbootdemo.payload.OrderRequestDTO;
-import com.hcl.sprbootdemo.payload.OrderResponse;
-import com.hcl.sprbootdemo.payload.OrderStatusUpdateDTO;
-import com.hcl.sprbootdemo.payload.StripePaymentDto;
 import com.hcl.sprbootdemo.service.OrdersService;
-import com.hcl.sprbootdemo.service.StripeService;
-import com.stripe.exception.StripeException;
-import com.stripe.model.PaymentIntent;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +22,21 @@ public class OrdersController {
 //    @Autowired
 //    private AuthUtil authUtil;
 
-	@Autowired
-	private StripeService stripeService;
+	//@Autowired
+//	private StripeService stripeService;
 
 	@GetMapping("/hello")
 	public String helloFn() {
 		return "Order Controller response!";
 	}
+	
+	@GetMapping("/user/orders")
+	public ResponseEntity<List<OrderDTO>> getUserOrders(Authentication authentication) {
+	    String email = authentication.getName();  // Gets logged-in user’s email
+	    List<OrderDTO> orders = ordersService.getOrdersByEmail(email);
+	    return new ResponseEntity<>(orders, HttpStatus.OK);
+	}
+
 	/*
 	 * @PostMapping("/order/users/payments/{paymentMethod}") public
 	 * ResponseEntity<OrderDTO> orderProducts(@PathVariable String
