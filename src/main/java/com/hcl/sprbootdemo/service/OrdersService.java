@@ -14,4 +14,6 @@ public interface OrdersService {
 
    // OrderResponse getAllSellerOrders(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
 	public List<OrderDTO> getOrdersByEmail(String email);
+	public List<OrderDTO> getAllOrders();
+	OrderDTO updateOrder(Long orderId, OrderDTO updatedOrder);
 }

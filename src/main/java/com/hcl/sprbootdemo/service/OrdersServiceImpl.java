@@ -55,6 +55,29 @@ public class OrdersServiceImpl implements OrdersService {
 
     @Autowired
     ProductsRepository productRepository;
+  
+
+    @Override
+    public List<OrderDTO> getAllOrders() {
+        List<Orders> orders = ordersRepository.findAll();
+        return orders.stream()
+                .map(order -> modelMapper.map(order, OrderDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderDTO updateOrder(Long orderId, OrderDTO updatedOrderDTO) {
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        order.setOrderStatus(updatedOrderDTO.getOrderStatus());
+        order.setAddress(updatedOrderDTO.getAddress());
+        order.setTotalAmount(updatedOrderDTO.getTotalAmount());
+        order.setOrderDate(updatedOrderDTO.getOrderDate());
+
+        Orders updated = ordersRepository.save(order);
+        return modelMapper.map(updated, OrderDTO.class);
+    }
     /*
     public List<OrderDTO> getOrdersByEmail(String email) {
         List<Orders> orders = ordersRepository.findByEmail(email);

@@ -30,13 +30,24 @@ public class OrdersController {
 		return "Order Controller response!";
 	}
 	
-	@GetMapping("/user/orders")
+	@GetMapping("/user/getorder")
 	public ResponseEntity<List<OrderDTO>> getUserOrders(Authentication authentication) {
 	    String email = authentication.getName();  // Gets logged-in user’s email
 	    List<OrderDTO> orders = ordersService.getOrdersByEmail(email);
 	    return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
+	@GetMapping("/admin/getallorders")
+    public List<OrderDTO> getAllOrders() {
+        return ordersService.getAllOrders();
+    }
 
+    @PutMapping("/update/{orderId}")
+    public OrderDTO updateOrder(
+            @PathVariable Long orderId,
+            @RequestBody OrderDTO updatedOrder
+    ) {
+        return ordersService.updateOrder(orderId, updatedOrder);
+    }
 	/*
 	 * @PostMapping("/order/users/payments/{paymentMethod}") public
 	 * ResponseEntity<OrderDTO> orderProducts(@PathVariable String
