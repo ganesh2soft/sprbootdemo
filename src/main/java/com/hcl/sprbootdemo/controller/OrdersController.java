@@ -2,7 +2,10 @@ package com.hcl.sprbootdemo.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.hcl.sprbootdemo.entity.Users;
+import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
 import com.hcl.sprbootdemo.payload.OrderDTO;
+import com.hcl.sprbootdemo.repository.UsersRepository;
 import com.hcl.sprbootdemo.service.OrdersService;
 import java.util.List;
 
@@ -18,6 +21,8 @@ public class OrdersController {
 
 	@Autowired
 	private OrdersService ordersService;
+	@Autowired
+	private UsersRepository usersRepo;
 
 //    @Autowired
 //    private AuthUtil authUtil;
@@ -36,10 +41,21 @@ public class OrdersController {
 	    List<OrderDTO> orders = ordersService.getOrdersByEmail(email);
 	    return new ResponseEntity<>(orders, HttpStatus.OK);
 	}
+	
 	@GetMapping("/admin/getallorders")
     public List<OrderDTO> getAllOrders() {
         return ordersService.getAllOrders();
     }
+
+
+	@GetMapping("/userrelated/{userId}")
+	public ResponseEntity<List<OrderDTO>> getOrdersByUserId(@PathVariable Long userId) {
+	    Users user = usersRepo.findById(userId)
+	        .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+        System.out.println("###########################Get Orders by User ID #############################");
+	    List<OrderDTO> orders = ordersService.getOrdersByEmail(user.getEmail());
+	    return ResponseEntity.ok(orders);
+	}
 
     @PutMapping("/update/{orderId}")
     public OrderDTO updateOrder(

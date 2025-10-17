@@ -58,12 +58,15 @@ public class OrdersServiceImpl implements OrdersService {
   
 
     @Override
-    public List<OrderDTO> getAllOrders() {
-        List<Orders> orders = ordersRepository.findAll();
+    public List<OrderDTO> getOrdersByEmail(String email) {
+        List<Orders> orders = ordersRepository.findByEmail(email);
+        System.out.println("Received email at order by email"+email);
         return orders.stream()
-                .map(order -> modelMapper.map(order, OrderDTO.class))
-                .collect(Collectors.toList());
+            .map(order -> modelMapper.map(order, OrderDTO.class))
+            .collect(Collectors.toList());
     }
+
+    
 
     @Override
     public OrderDTO updateOrder(Long orderId, OrderDTO updatedOrderDTO) {
@@ -249,10 +252,14 @@ public class OrdersServiceImpl implements OrdersService {
 	
 */
 
+
+
 	@Override
-	public List<OrderDTO> getOrdersByEmail(String email) {
+	public List<OrderDTO> getAllOrders() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 
 }

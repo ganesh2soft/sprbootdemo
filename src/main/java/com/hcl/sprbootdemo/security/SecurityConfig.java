@@ -13,6 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity(debug=true)
@@ -24,24 +25,26 @@ public class SecurityConfig {
 	UserAuthConfig authProvider;
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-	    http
-	        .csrf(csrf -> csrf.disable())
-	        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-	        .authorizeHttpRequests(auth -> auth
-	            .requestMatchers(
-	                "/v3/api-docs/**",
-	                "/swagger-ui/**",
-	                "/swagger-ui.html",
-	                "/api/products/**",
-	                "/api/carts/**",
-	                "/api/orders/**",
-	                "/api/users/**",
-	                "/api/payments/**",
-	                "/error"
-	            ).permitAll()
-	            .anyRequest().authenticated()
-	        )
-	        .httpBasic(); // keep httpBasic enabled for /login
+		http
+	    .csrf(csrf -> csrf.disable())
+	    .cors(withDefaults()) // ✅ This enables your CorsFilter bean
+	    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+	    .authorizeHttpRequests(auth -> auth
+	        .requestMatchers(
+	            "/v3/api-docs/**",
+	            "/swagger-ui/**",
+	            "/swagger-ui.html",
+	            "/api/products/**",
+	            "/api/carts/**",
+	            "/api/orders/**",
+	            "/api/users/**",
+	            "/api/payments/**",
+	            "/error"
+	        ).permitAll()
+	        .anyRequest().authenticated()
+	    )
+	    .httpBasic();
+
 
 	    // ✅ Add filters properly outside of httpBasic
 	    http.addFilterAfter(new JWTTokenGeneratorFilter(), org.springframework.security.web.authentication.www.BasicAuthenticationFilter.class);

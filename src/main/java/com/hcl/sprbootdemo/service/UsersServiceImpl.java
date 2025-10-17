@@ -3,6 +3,7 @@ package com.hcl.sprbootdemo.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.hcl.sprbootdemo.entity.Users;
@@ -15,7 +16,8 @@ public class UsersServiceImpl implements UsersService {
 	
 	@Autowired
 	UsersRepository userRepo;
-	
+	@Autowired
+    private PasswordEncoder pwdEncoder;
 	@Override
 	public Users saveUser(Users user) {
 		// TODO Auto-generated method stub
@@ -39,10 +41,15 @@ public class UsersServiceImpl implements UsersService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 
-        user.setUserName(userDetails.getUserName());
-        user.setEmail(userDetails.getEmail());
-        user.setPassword(userDetails.getPassword());
-        user.setRoles(userDetails.getRoles());
+      //  user.setUserName(userDetails.getUserName());
+      //  user.setEmail(userDetails.getEmail());
+     // Update password only if provided (and encode it)
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isBlank()) {
+            user.setPassword(pwdEncoder.encode(userDetails.getPassword()));
+        }
+    //    user.setRoles(userDetails.getRoles());
+        user.setAddress(userDetails.getAddress());
+        
 
         return userRepo.save(user);
     }
