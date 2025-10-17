@@ -25,6 +25,7 @@ import com.hcl.sprbootdemo.security.SecurityConstants;
 import com.hcl.sprbootdemo.service.UsersService;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
@@ -51,10 +52,10 @@ public class UsersController {
 		user.setPassword(pwdEncoder.encode(user.getPassword()));
 		return usersService.saveUser(user);
 	}
-	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@GetMapping("/get/{id}")
-	public Users getUser(@PathVariable Long id) {
-		return usersService.findUserbyId(id);
+	
+	@GetMapping("/get/{userId}")
+	public Users getUser(@PathVariable Long userId) {
+		return usersService.findUserbyId(userId);
 
 	}
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -63,17 +64,21 @@ public class UsersController {
 		return usersService.getAllUsers();
 	}
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
-	@DeleteMapping("/delete/{id}")
+	@DeleteMapping("/delete/{user_id}")
 	public String deleteUser(@PathVariable Long userId) {
 		usersService.deleteUser(userId);
 		return "User deleted successfully!";
 	}
 
-	@PutMapping("/update/{id}")
-	public Users updateUser(@PathVariable Long userId, @RequestBody Users user) {
-		return usersService.updateUser(userId, user);
-	}
-
+	 @PutMapping("/update/{userId}")
+	    public ResponseEntity<Users> updateUser(
+	            @PathVariable Long userId,
+	            @Valid @RequestBody Users user) {
+	        
+	        Users updatedUser = usersService.updateUser(userId, user);
+	        
+	        return ResponseEntity.ok(updatedUser);
+	    }
 	
 
 	@GetMapping("/login")
