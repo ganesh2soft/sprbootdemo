@@ -12,7 +12,7 @@ public interface CartsService {
 	List<CartsDTO> getAllCarts();
 
 	// CartDTO getCart(String emailId, Long cartId);
-	CartsDTO getCart();
+	CartsDTO getCart(String email);
 
 	@Transactional
 	CartsDTO updateProductQuantityInCart(Long productId, Integer quantity);
@@ -20,4 +20,6 @@ public interface CartsService {
 	String deleteProductFromCart(Long cartId, Long productId);
 
 	void updateProductInCarts(Long cartId, Long productId);
+	public void addToCart(String userEmail, Long productId, int quantity);
+
 }

@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,6 +24,7 @@ import jakarta.persistence.Table;
 
 public class Carts {
 	@Id
+	@Column(name = "cart_id")
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long cartId;
 
@@ -29,9 +32,12 @@ public class Carts {
 	@JoinColumn(name = "user_id")
 	private Users user;
 
-	@OneToMany(mappedBy = "cart", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REMOVE }, orphanRemoval = true)
+//	@OneToMany(mappedBy = "cart", cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+//			CascadeType.REMOVE }, orphanRemoval = true)
+//	private List<CartItem> cartItems = new ArrayList<>();
+	@OneToMany(mappedBy = "cart", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true, fetch = FetchType.EAGER)
 	private List<CartItem> cartItems = new ArrayList<>();
+
 
 	private Double totalPrice = 0.0;
 

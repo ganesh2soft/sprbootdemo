@@ -1,44 +1,24 @@
 package com.hcl.sprbootdemo.exception;
 
+
+
 public class ResourceNotFoundException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
-	String resourceName;
-	String field;
-	String fieldName;
-	Long fieldId;
+    private static final long serialVersionUID = 1L;
 
-	public ResourceNotFoundException() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
 
-	public ResourceNotFoundException(String resourceName, String field, String fieldName) {
-		super(String.format("%s not found with %s : %s", resourceName, field, fieldName));
+    public ResourceNotFoundException(String resourceName, String fieldName, String fieldValue) {
+        super(String.format("%s not found with %s: %s", resourceName, fieldName, fieldValue));
+    }
 
-		this.resourceName = resourceName;
-		this.field = field;
-		this.fieldName = fieldName;
-	}
+    public ResourceNotFoundException(String resourceName, String fieldName, Long fieldValue) {
+        super(String.format("%s not found with %s: %d", resourceName, fieldName, fieldValue));
+    }
 
-	public ResourceNotFoundException(String resourceName, String field, Long fieldId) {
-		super(String.format("%s not found with %s : %d", resourceName, field, fieldId));
-		this.resourceName = resourceName;
-		this.field = field;
-		this.fieldId = fieldId;
-	}
-
-	public ResourceNotFoundException(String resourceName, String field) {
-		super(String.format("%s not found with %s ", resourceName, field));
-		this.resourceName = resourceName;
-		this.field = field;
-
-	}
-	public ResourceNotFoundException(String resourceName, Long fieldId) {
-		super(String.format("%s not found with %s ", resourceName, fieldId));
-		this.resourceName = resourceName;
-		this.fieldId = fieldId;
-
-	}
-
+    public ResourceNotFoundException(String resourceName, Long id) {
+        super(String.format("%s not found with id: %d", resourceName, id));
+    }
 }

@@ -254,7 +254,7 @@ public class OrdersServiceImpl implements OrdersService {
     }
 
 	
-*/
+
 
     @Override
     public List<OrderDTO> getAllOrders() {
@@ -263,42 +263,48 @@ public class OrdersServiceImpl implements OrdersService {
         return orders.stream().map(order -> {
             OrderDTO dto = new OrderDTO();
             dto.setOrderId(order.getOrderId());
+            dto.setEmail(order.getEmail());
             dto.setOrderDate(order.getOrderDate());
             dto.setOrderStatus(order.getOrderStatus());
-            dto.setTotalAmount(order.getTotalAmount());
             dto.setAddress(order.getAddress());
-            dto.setEmail(order.getEmail());
+            dto.setTotalAmount(order.getTotalAmount());
 
-            // Map payment
+            // Map payment if available
             if (order.getPayment() != null) {
-                Payments payment = order.getPayment();
-                PaymentDTO paymentDTO = new PaymentDTO();
-                paymentDTO.setPaymentId(payment.getPaymentId());
-                paymentDTO.setPaymentMethod(payment.getPaymentMethod());
-                paymentDTO.setPgPaymentId(payment.getPgPaymentId());
-                paymentDTO.setPgStatus(payment.getPgStatus());
-                paymentDTO.setPgResponseMessage(payment.getPgResponseMessage());
+                PaymentDTO paymentDTO = modelMapper.map(order.getPayment(), PaymentDTO.class);
                 dto.setPayment(paymentDTO);
             }
 
-            // Map order items (if needed)
+            // Map each order item manually
             List<OrderItemDTO> itemDTOs = order.getOrderItems().stream().map(item -> {
                 OrderItemDTO itemDTO = new OrderItemDTO();
+                itemDTO.setOrderItemId(item.getOrderItemId());
                 itemDTO.setQuantity(item.getQuantity());
-                itemDTO.setOrderedProductPrice(item.getOrderedProductPrice());
                 itemDTO.setDiscount(item.getDiscount());
-                itemDTO.setProductName(item.getProduct().getProductName());
-                itemDTO.setPrice(item.getProduct().getPrice());
+                itemDTO.setOrderedProductPrice(item.getOrderedProductPrice());
+
+                if (item.getProduct() != null) {
+                    itemDTO.setProductName(item.getProduct().getProductName());
+                    itemDTO.setPrice(item.getProduct().getPrice());
+                }
+
                 return itemDTO;
             }).collect(Collectors.toList());
-            dto.setOrderItems(itemDTOs);
 
+            dto.setOrderItems(itemDTOs);
             return dto;
         }).collect(Collectors.toList());
     }
 
-	
 
-	
+	*/
+    @Override
+    public List<OrderDTO> getAllOrders() {
+        List<Orders> orders = ordersRepository.findAll();
+        return orders.stream()
+                .map(order -> modelMapper.map(order, OrderDTO.class))
+                .collect(Collectors.toList());
+    }
+
 
 }

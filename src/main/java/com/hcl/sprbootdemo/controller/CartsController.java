@@ -5,10 +5,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
+import com.hcl.sprbootdemo.payload.AddToCartRequest;
 import com.hcl.sprbootdemo.payload.CartsDTO;
 import com.hcl.sprbootdemo.payload.MessageResponse;
 import com.hcl.sprbootdemo.service.CartsService;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -21,12 +24,19 @@ public class CartsController {
 	public String helloFn() {
 		return "Cart Controller response!";
 	}
-	
-	@PostMapping("/addprod2cart/products/{productId}/quantity/{quantity}")
-    public ResponseEntity<CartsDTO> addProductToCartfn(@PathVariable Long productId, @PathVariable Integer quantity) {
-       
-       CartsDTO cartDTO= cartsService.addProductsToCart(productId, quantity);
-        return new ResponseEntity<>(cartDTO, HttpStatus.CREATED);
+	@PostMapping("/addToCart")
+    public ResponseEntity<?> addToCart(@RequestBody AddToCartRequest request, Principal principal) {
+        String userEmail = principal.getName();
+           
+
+        try {
+            cartsService.addToCart(userEmail, request.getProductId(), request.getQuantity());
+            return ResponseEntity.ok("Product added to cart successfully");
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add product to cart");
+        }
     }
 
     @GetMapping("/getcarts")
@@ -35,9 +45,10 @@ public class CartsController {
         return new ResponseEntity<>(cartDTOs, HttpStatus.OK);
     }
 
-    @GetMapping("/users/cart")
-    public ResponseEntity<CartsDTO> getCartById() {
-        CartsDTO cartDTO = cartsService.getCart();
+    @GetMapping("/userrelated/cart/{email}")
+    public ResponseEntity<CartsDTO> getCartByemail(@PathVariable String email) {
+    	System.out.println("Control reaches userrelated cart"+email);
+        CartsDTO cartDTO = cartsService.getCart(email);
         return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
 

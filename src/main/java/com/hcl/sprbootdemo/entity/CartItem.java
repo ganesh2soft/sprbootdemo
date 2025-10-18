@@ -59,11 +59,11 @@ public class CartItem {
 	public void setProductPrice(double productPrice) {
 		this.productPrice = productPrice;
 	}
-	@Override
-	public String toString() {
-		return "CartItem [cartItemId=" + cartItemId + ", cart=" + cart + ", product=" + product + ", quantity="
-				+ quantity + ", discount=" + discount + ", productPrice=" + productPrice + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "CartItem [cartItemId=" + cartItemId + ", cart=" + cart + ", product=" + product + ", quantity="
+//				+ quantity + ", discount=" + discount + ", productPrice=" + productPrice + "]";
+//	}
 	public CartItem() {
 		super();
 		// TODO Auto-generated constructor stub
