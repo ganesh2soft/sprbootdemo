@@ -24,9 +24,6 @@ public class OrdersController {
 	@Autowired
 	private UsersRepository usersRepo;
 
-//    @Autowired
-//    private AuthUtil authUtil;
-
 	//@Autowired
 //	private StripeService stripeService;
 
@@ -34,13 +31,7 @@ public class OrdersController {
 	public String helloFn() {
 		return "Order Controller response!";
 	}
-	
-	@GetMapping("/user/getorder")
-	public ResponseEntity<List<OrderDTO>> getUserOrders(Authentication authentication) {
-	    String email = authentication.getName();  // Gets logged-in user’s email
-	    List<OrderDTO> orders = ordersService.getOrdersByEmail(email);
-	    return new ResponseEntity<>(orders, HttpStatus.OK);
-	}
+		
 	
 	@GetMapping("/admin/getallorders")
     public List<OrderDTO> getAllOrders() {
@@ -54,6 +45,7 @@ public class OrdersController {
 	        .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
         System.out.println("###########################Get Orders by User ID #############################");
 	    List<OrderDTO> orders = ordersService.getOrdersByEmail(user.getEmail());
+	    System.out.println(orders);
 	    return ResponseEntity.ok(orders);
 	}
 

@@ -1,6 +1,8 @@
 package com.hcl.sprbootdemo.service;
 
 import jakarta.transaction.Transactional;
+
+import org.hibernate.query.Order;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +20,9 @@ import com.hcl.sprbootdemo.entity.Products;
 import com.hcl.sprbootdemo.exception.APIException;
 import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
 import com.hcl.sprbootdemo.payload.OrderDTO;
+import com.hcl.sprbootdemo.payload.OrderItemDTO;
 import com.hcl.sprbootdemo.payload.OrderResponse;
+import com.hcl.sprbootdemo.payload.PaymentDTO;
 import com.hcl.sprbootdemo.repository.CartsRepository;
 
 import com.hcl.sprbootdemo.repository.OrderItemRepository;
@@ -252,13 +256,48 @@ public class OrdersServiceImpl implements OrdersService {
 	
 */
 
+    @Override
+    public List<OrderDTO> getAllOrders() {
+        List<Orders> orders = ordersRepository.findAll();
 
+        return orders.stream().map(order -> {
+            OrderDTO dto = new OrderDTO();
+            dto.setOrderId(order.getOrderId());
+            dto.setOrderDate(order.getOrderDate());
+            dto.setOrderStatus(order.getOrderStatus());
+            dto.setTotalAmount(order.getTotalAmount());
+            dto.setAddress(order.getAddress());
+            dto.setEmail(order.getEmail());
 
-	@Override
-	public List<OrderDTO> getAllOrders() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+            // Map payment
+            if (order.getPayment() != null) {
+                Payments payment = order.getPayment();
+                PaymentDTO paymentDTO = new PaymentDTO();
+                paymentDTO.setPaymentId(payment.getPaymentId());
+                paymentDTO.setPaymentMethod(payment.getPaymentMethod());
+                paymentDTO.setPgPaymentId(payment.getPgPaymentId());
+                paymentDTO.setPgStatus(payment.getPgStatus());
+                paymentDTO.setPgResponseMessage(payment.getPgResponseMessage());
+                dto.setPayment(paymentDTO);
+            }
+
+            // Map order items (if needed)
+            List<OrderItemDTO> itemDTOs = order.getOrderItems().stream().map(item -> {
+                OrderItemDTO itemDTO = new OrderItemDTO();
+                itemDTO.setQuantity(item.getQuantity());
+                itemDTO.setOrderedProductPrice(item.getOrderedProductPrice());
+                itemDTO.setDiscount(item.getDiscount());
+                itemDTO.setProductName(item.getProduct().getProductName());
+                itemDTO.setPrice(item.getProduct().getPrice());
+                return itemDTO;
+            }).collect(Collectors.toList());
+            dto.setOrderItems(itemDTOs);
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+	
 
 	
 
