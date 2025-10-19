@@ -65,4 +65,18 @@ public class CartsController {
         MessageResponse messageResponse = new MessageResponse(status);
         return new ResponseEntity<>(messageResponse, HttpStatus.OK);
     }
+    
+    @DeleteMapping("/userrelated/{email}/{products}")
+    public ResponseEntity<MessageResponse> deleteProductsFromUserCart(
+            @PathVariable String email,
+            @RequestBody List<Long> productIds) {
+        try {
+            cartsService.deleteProductsFromUserCart(email, productIds);
+            return ResponseEntity.ok(new MessageResponse("Selected products removed from cart successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body(new MessageResponse("Failed to remove products from cart"));
+        }
+    }
 }
+

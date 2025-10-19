@@ -342,4 +342,27 @@ public class CartsServiceImpl implements CartsService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
+	@Override
+	@Transactional
+	public void deleteProductsFromUserCart(String email, List<Long> productIds) {
+	    // Fetch the user's cart
+	    Carts cart = cartsRepository.findByUserEmail(email)
+	            .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user: " + email));
+
+	    // Remove CartItems associated with the specified product IDs
+	    cart.getCartItems().removeIf(cartItem -> 
+	        productIds.contains(cartItem.getProduct().getProductId())
+	    );
+
+	    // Recalculate the total price after removal
+	    cart.setTotalPrice(cart.getCartItems().stream()
+	            .mapToDouble(cartItem -> cartItem.getProductPrice() * cartItem.getQuantity())
+	            .sum());
+
+	    // Save the updated cart
+	    cartsRepository.save(cart);
+	}
+
 }
