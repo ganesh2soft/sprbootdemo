@@ -1,6 +1,8 @@
 package com.hcl.sprbootdemo.service;
 
 import org.modelmapper.ModelMapper;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import java.util.List;
 
 @Service
 public class OrdersServiceImpl implements OrdersService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(OrdersServiceImpl.class);
 
 	@Autowired
 	CartsRepository cartsRepository;
@@ -51,7 +55,7 @@ public class OrdersServiceImpl implements OrdersService {
 	@Override
 	public List<OrderDTO> getOrdersByEmail(String email) {
 		List<Orders> orders = ordersRepository.findByEmail(email);
-		System.out.println("Received email at order by email" + email);
+		logger.info("Received email at order by email {}", email);
 		return orders.stream()
 				.map(order -> modelMapper.map(order, OrderDTO.class))
 				.toList();

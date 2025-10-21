@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hcl.sprbootdemo.entity.Users;
 import com.hcl.sprbootdemo.repository.UsersRepository;
-import com.hcl.sprbootdemo.security.SecurityConstants;
 import com.hcl.sprbootdemo.service.UsersService;
 
 import jakarta.servlet.http.HttpServletResponse;

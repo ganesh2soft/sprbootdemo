@@ -136,7 +136,7 @@ public class CartsServiceImpl implements CartsService {
 	public CartsDTO getCart(String email) {
 		
 		Carts cart = cartsRepository.findCartByEmail(email);
-		System.out.println(cart);
+		
 		if (cart == null) {
 			throw new ResourceNotFoundException("Cart not found for email: " + email);
 		}
