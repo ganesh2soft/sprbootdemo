@@ -154,7 +154,7 @@ public class CartsServiceImpl implements CartsService {
 				.map(item -> modelMapper.map(item.getProduct(), ProductDTO.class)).toList();
 
 		cartDTO.setProducts(products);
-		logger.info("CART STATUS at getCart {} ",cartDTO.toString());
+		
 
 		return cartDTO;
 	}

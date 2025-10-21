@@ -76,7 +76,7 @@ public class CartsController {
         
         logger.info("Cart deletion for user: {}" , email);
         logger.info("productIds: {}" , productIds);
-        //logger.info("productIds: {}", String.join(",", productIds));
+     
 
         
         try {

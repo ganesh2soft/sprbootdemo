@@ -42,7 +42,7 @@ public class UserAuthConfig implements AuthenticationProvider {
 		 * Object credentials = authentication.getCredentials().toString();
 		 */
 		String pwd = authentication.getCredentials().toString();
-		logger.info("Username's Email ID refered as username :{}" + username);
+		logger.info("Username's Email ID refered as username :{}", username);
 	
 		logger.info("Fetching from DB {}" , usersRepository.findUsersByEmail(username));
 		Users usersObj = usersRepository.findUsersByEmail(username);
