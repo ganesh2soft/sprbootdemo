@@ -1,8 +1,5 @@
 package com.hcl.sprbootdemo.entity;
 
-
-
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -107,11 +104,6 @@ public class Carts {
 
 	public Carts() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
-
-	
-	
-	
-	
-}
+		}

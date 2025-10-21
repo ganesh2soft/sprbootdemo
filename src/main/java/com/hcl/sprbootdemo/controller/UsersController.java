@@ -26,10 +26,14 @@ import com.hcl.sprbootdemo.service.UsersService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
+	private static final Logger logger = LoggerFactory.getLogger(UsersController.class);
 
 	@Autowired
 	private UsersService usersService;
@@ -85,44 +89,20 @@ public class UsersController {
 	public ResponseEntity<Users> processLoginRequest() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Users usersObj = usersRepo.findUsersByEmail(auth.getName());
-		System.out.println("Response body user details=========" + usersObj);
+		logger.info("Response body user details=========" + usersObj);
 		try {
-			// Introduce a 3-second (3000 milliseconds) delay
+			
 			Thread.sleep(2000);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}
+				
+		String hr=httpServletResponse.getHeader(SecurityConstants.JWT_HEADER);		
+		System.out.println("hr"+hr);		
+		HttpHeaders headers = new HttpHeaders();			
+		ResponseEntity<Users> responseEntity = new ResponseEntity<>(usersObj,headers,HttpStatus.OK);		
+		logger.info("Return result to React front end as below"+responseEntity);
 		
-		
-		String hr=httpServletResponse.getHeader(SecurityConstants.JWT_HEADER);
-		
-		System.out.println("hr"+hr);
-		
-		HttpHeaders headers = new HttpHeaders();
-		// headers.add(SecurityConstants.JWT_HEADER, hr);
-		
-		ResponseEntity<Users> responseEntity = new ResponseEntity<>(usersObj,headers,HttpStatus.OK);
-		
-		System.out.println("Return result to React front end as below");
-		System.out.println(responseEntity);
 		return responseEntity;
-	
+		}
 	}
-	
-	/*
-	 * @GetMapping("/login") public ResponseEntity<Users>
-	 * loginFn(@RequestParam(value = "username", required = false) String username,
-	 * 
-	 * @RequestParam(value = "password", required = false) String password) {
-	 * 
-	 * Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	 * 
-	 * Users usersObj = usersRepo.findUsersByEmail(auth.getName());
-	 * System.out.println("Welcomed user is  " + usersObj);
-	 * 
-	 * return ResponseEntity.ok(usersObj);
-	 * 
-	 * }
-	 */
-
-}

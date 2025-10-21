@@ -2,11 +2,8 @@ package com.hcl.sprbootdemo.entity;
 
 import jakarta.persistence.*;
 
-
 @Entity
-
 @Table(name = "cart_items")
-
 public class CartItem {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,14 +56,18 @@ public class CartItem {
 	public void setProductPrice(double productPrice) {
 		this.productPrice = productPrice;
 	}
-//	@Override
-//	public String toString() {
-//		return "CartItem [cartItemId=" + cartItemId + ", cart=" + cart + ", product=" + product + ", quantity="
-//				+ quantity + ", discount=" + discount + ", productPrice=" + productPrice + "]";
-//	}
+	/*
+	 * This is important. Otherwise cyclic things will happen. Cart calls Cartitems, Cartitem calls Cart
+	 * @Override
+	   public String toString() {
+		return "CartItem [cartItemId=" + cartItemId + ", cart=" + cart + ", product=" + product + ", quantity="
+				+ quantity + ", discount=" + discount + ", productPrice=" + productPrice + "]";
+	}
+	 */
+	
 	public CartItem() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 	public CartItem(Long cartItemId, Carts cart, Products product, Integer quantity, double discount,
 			double productPrice) {

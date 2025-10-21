@@ -2,23 +2,17 @@ package com.hcl.sprbootdemo.service;
 
 import java.util.List;
 
-
 import com.hcl.sprbootdemo.payload.ProductDTO;
-
 
 public interface ProductsService {
 	public ProductDTO saveProduct(ProductDTO product);
 
-    public void deleteProduct(Long productId);
+	public ProductDTO findProductById(Long productId);
 
-    public List<ProductDTO> getAllProducts();
+	public List<ProductDTO> getAllProducts();
 
-    public ProductDTO updateProduct(Long productId, ProductDTO product);
+	public void deleteProduct(Long productId);
 
-    public ProductDTO findProductById(Long productId);
-
-	public ProductDTO searchProductByKeyword(String keyword);
-	
+	public ProductDTO updateProduct(Long productId, ProductDTO product);
 
 }
-

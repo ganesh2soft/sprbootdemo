@@ -17,9 +17,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.hcl.sprbootdemo.entity.Users;
 import com.hcl.sprbootdemo.repository.UsersRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class UserAuthConfig implements AuthenticationProvider {
 
+	private static final Logger logger = LoggerFactory.getLogger(UserAuthConfig.class);
 	@Autowired
 	UsersRepository usersRepository;
 	
@@ -38,23 +42,24 @@ public class UserAuthConfig implements AuthenticationProvider {
 		 * Object credentials = authentication.getCredentials().toString();
 		 */
 		String pwd = authentication.getCredentials().toString();
-		System.out.println("Username's Email ID refered as username :-----------" + username);
-		System.out.println("Supplied password " + pwd);
-		System.out.println("Fetching from DB" + usersRepository.findUsersByEmail(username));
+		logger.info("Username's Email ID refered as username :-----------" + username);
+		logger.info("Supplied password " + pwd);
+		logger.info("Fetching from DB" + usersRepository.findUsersByEmail(username));
 		Users usersObj = usersRepository.findUsersByEmail(username);
 		String encryptedPwd = pwdEncoder.encode(pwd);
-		System.out.println("Encrypted Password" + encryptedPwd);
-		System.out.println("User Object is" + usersObj);
+		logger.info("Encrypted Password" + encryptedPwd);
+		logger.info("User Object is" + usersObj);
 		if (usersObj == null) {
 			throw new UsernameNotFoundException("User not found: " + username);
 		} else if (pwdEncoder.matches(pwd, usersObj.getPassword())) {
-			System.out.println(" Password true just printing" + usersObj);
+			logger.info(" Password true just printing" + usersObj);
 			List<GrantedAuthority> authorities = new ArrayList<>();
 			authorities.add(new SimpleGrantedAuthority(usersObj.getRoles()));
 			return new UsernamePasswordAuthenticationToken(username, pwd, authorities);
 
 		} else {
-			System.out.println("Bad Credentials Alert");
+			
+			logger.info("Bad Credentials Alert");
 			throw new BadCredentialsException("Invalid Password");
 		}
 	}

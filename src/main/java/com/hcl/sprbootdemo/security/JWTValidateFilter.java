@@ -18,9 +18,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
-public class JWTValidateFilter extends OncePerRequestFilter {
 
-	
+public class JWTValidateFilter extends OncePerRequestFilter {	
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

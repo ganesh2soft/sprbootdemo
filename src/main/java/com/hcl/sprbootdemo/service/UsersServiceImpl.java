@@ -18,12 +18,19 @@ public class UsersServiceImpl implements UsersService {
 	UsersRepository userRepo;
 	@Autowired
     private PasswordEncoder pwdEncoder;
+	
 	@Override
 	public Users saveUser(Users user) {
-		// TODO Auto-generated method stub
+		
 		return userRepo.save(user);
 	}
-
+    
+	@Override
+	public Users findUserbyId(Long userId) {
+		return userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
+	}
+	
 	@Override
 	public void deleteUser(Long userId) {
 		 userRepo.deleteById(userId);
@@ -32,7 +39,7 @@ public class UsersServiceImpl implements UsersService {
 
 	@Override
 	public List<Users> getAllUsers() {
-		// TODO Auto-generated method stub
+		
 		return userRepo.findAll();
 	}
 
@@ -41,23 +48,14 @@ public class UsersServiceImpl implements UsersService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 
-      //  user.setUserName(userDetails.getUserName());
-      //  user.setEmail(userDetails.getEmail());
-     // Update password only if provided (and encode it)
         if (userDetails.getPassword() != null && !userDetails.getPassword().isBlank()) {
             user.setPassword(pwdEncoder.encode(userDetails.getPassword()));
         }
-    //    user.setRoles(userDetails.getRoles());
+   
         user.setAddress(userDetails.getAddress());
-        
-
         return userRepo.save(user);
     }
-	@Override
-	public Users findUserbyId(Long userId) {
-		return userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
-	}
+	
 	
 
 }

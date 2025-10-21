@@ -10,9 +10,7 @@ import com.hcl.sprbootdemo.service.OrdersService;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,9 +21,6 @@ public class OrdersController {
 	private OrdersService ordersService;
 	@Autowired
 	private UsersRepository usersRepo;
-
-	//@Autowired
-//	private StripeService stripeService;
 
 	@GetMapping("/hello")
 	public String helloFn() {
@@ -38,14 +33,13 @@ public class OrdersController {
         return ordersService.getAllOrders();
     }
 
-
 	@GetMapping("/userrelated/{userId}")
 	public ResponseEntity<List<OrderDTO>> getOrdersByUserId(@PathVariable Long userId) {
 	    Users user = usersRepo.findById(userId)
 	        .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
        
 	    List<OrderDTO> orders = ordersService.getOrdersByEmail(user.getEmail());
-	    System.out.println(orders);
+	    
 	    return ResponseEntity.ok(orders);
 	}
 

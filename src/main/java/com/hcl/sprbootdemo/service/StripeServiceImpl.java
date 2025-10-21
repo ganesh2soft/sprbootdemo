@@ -40,16 +40,7 @@ public class StripeServiceImpl implements StripeService {
             CustomerCreateParams customerParams = CustomerCreateParams.builder()
                     .setEmail(stripePaymentDto.getEmail())
                     .setName(stripePaymentDto.getName())
-                    //.setAddress(stripePaymentDto.getAddress())
-//                    .setAddress(
-//                            CustomerCreateParams.Address.builder()
-//                                    .setLine1(stripePaymentDto.getAddress().getStreet())
-//                                    .setCity(stripePaymentDto.getAddress().getCity())
-//                                    .setState(stripePaymentDto.getAddress().getState())
-//                                    .setPostalCode(stripePaymentDto.getAddress().getPincode())
-//                                    .setCountry(stripePaymentDto.getAddress().getCountry())
-//                                    .build()
-//                    )
+                    
                     .build();
 
             customer = Customer.create(customerParams);

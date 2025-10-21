@@ -6,14 +6,13 @@ import com.hcl.sprbootdemo.entity.Users;
 
 public interface UsersService {
 	public Users saveUser(Users user);
-
+	
+	public Users findUserbyId(Long userId);
+	
 	public void deleteUser(Long userId);
-
-	public List<Users> getAllUsers();
+	
+	public List<Users> getAllUsers();		
 
 	public Users updateUser(Long userId, Users user);
-
-
-	public Users findUserbyId(Long userId);
 	
 }

@@ -10,8 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
-//    @Query("SELECT COALESCE(SUM(o.totalAmount), 0) FROM Order o")
-//    Double getTotalRevenue();
-	
 	List<Orders> findByEmail(String email);
 }

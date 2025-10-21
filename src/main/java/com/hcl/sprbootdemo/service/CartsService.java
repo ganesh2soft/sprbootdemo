@@ -6,23 +6,16 @@ import com.hcl.sprbootdemo.payload.CartsDTO;
 
 import jakarta.transaction.Transactional;
 
-public interface CartsService {
-    CartsDTO addProductsToCart(Long productId, Integer quantity);
+public interface CartsService {    
 
     List<CartsDTO> getAllCarts();
-
-    // CartDTO getCart(String emailId, Long cartId);
-    CartsDTO getCart(String email);
-
+    void addToCart(String userEmail, Long productId, int quantity);    
+    CartsDTO getCart(String email);  
+    String deleteProductFromCart(Long cartId, Long productId);
+    
     @Transactional
     CartsDTO updateProductQuantityInCart(Long productId, Integer quantity);
-
-    String deleteProductFromCart(Long cartId, Long productId);
-
-    void updateProductInCarts(Long cartId, Long productId);
-
-    void addToCart(String userEmail, Long productId, int quantity);
-
-    // New method to delete multiple products by user email
-    void deleteProductsFromUserCart(String email, List<Long> productIds);
+    void deleteProductsFromUserCart(String email, List<Long> productIds);   
+  
+        
 }

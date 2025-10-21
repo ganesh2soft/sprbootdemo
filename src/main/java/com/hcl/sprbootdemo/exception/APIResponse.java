@@ -7,7 +7,7 @@ public class APIResponse {
 
 	public APIResponse() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public APIResponse(String message, boolean status) {

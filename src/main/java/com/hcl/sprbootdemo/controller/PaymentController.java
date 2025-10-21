@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hcl.sprbootdemo.payload.MessageResponse;
 import com.hcl.sprbootdemo.payload.PaymentDTO;
-import com.hcl.sprbootdemo.service.CartsService;
 import com.hcl.sprbootdemo.service.PaymentService;
 
 @RestController
@@ -32,6 +31,7 @@ public class PaymentController {
         List<PaymentDTO> payments = paymentService.getAllPayments();
         return ResponseEntity.ok(payments);
     }
+    
     @PutMapping("/userrelated/{email}/pay")
     public ResponseEntity<MessageResponse> payForCart(@PathVariable String email) {
         try {

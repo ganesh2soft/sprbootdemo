@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "payments")
-
 public class Payments {
 
     @Id
