@@ -1,4 +1,6 @@
 package com.hcl.sprbootdemo.controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/carts")
 public class CartsController {
+	private static final Logger logger = LoggerFactory.getLogger(CartsController.class);
 
 	@Autowired
 	CartsService cartsService;
@@ -47,8 +50,8 @@ public class CartsController {
 
     @GetMapping("/userrelated/cart/{email}")
     public ResponseEntity<CartsDTO> getCartByemail(@PathVariable String email) {
-    	System.out.println("Control reaches userrelated cart"+email);
-        CartsDTO cartDTO = cartsService.getCart(email);
+    	logger.info("At Controller, received input from React "+email);
+    	CartsDTO cartDTO = cartsService.getCart(email);
         return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
 
@@ -70,8 +73,10 @@ public class CartsController {
     public ResponseEntity<MessageResponse> deleteProductsFromUserCart(
             @PathVariable String email,
             @RequestBody List<Long> productIds) {
-        System.out.println("Cart deletion for user: " + email);
-        System.out.println("productIds: " + productIds);
+        
+        logger.info("Cart deletion for user: " + email);
+        logger.info("productIds: " + productIds);
+        
         try {
             cartsService.deleteProductsFromUserCart(email, productIds);
             return ResponseEntity.ok(new MessageResponse("Selected products removed from cart successfully"));
