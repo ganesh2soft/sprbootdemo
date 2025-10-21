@@ -117,7 +117,7 @@ public class Payments {
 
 	public Payments() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
     
 }

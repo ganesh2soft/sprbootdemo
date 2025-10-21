@@ -94,16 +94,9 @@ public class Products {
 	}
 	public Products() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
-	
-	
-	
-	
-
-    //@OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.EAGER)
-    //private List<CartItem> products = new ArrayList<>();
-
+	 
 	
 }
 

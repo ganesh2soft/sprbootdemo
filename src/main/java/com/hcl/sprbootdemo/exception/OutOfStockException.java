@@ -9,7 +9,7 @@ public class OutOfStockException extends RuntimeException {
 
 	public OutOfStockException() {
 		super();
-		// TODO Auto-generated constructor stub
+
 	}
 	
 	public OutOfStockException(String resourceName, int requestedQuantity, int availableQuantity) {

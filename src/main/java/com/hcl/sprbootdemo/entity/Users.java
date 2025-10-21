@@ -131,46 +131,8 @@ public class Users {
 		this.roles = roles;
 		this.address = address;
 	}
-
 	public Users() {
-		super();
-		// TODO Auto-generated constructor stub
+		super();		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-//	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.EAGER)
-//	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-//	private Set<AppRole> roles = new HashSet<>();
-	
-
-//	@OneToMany(mappedBy = "user", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
-//    @JoinTable(name = "user_address",
-//                joinColumns = @JoinColumn(name = "user_id"),
-//                inverseJoinColumns = @JoinColumn(name = "address_id"))
-//	private List<String> addresses = new ArrayList<>();
-	
-	
-//	@OneToOne(mappedBy = "users", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
-//	private Cart cart;
-//
-//	
-//	@OneToMany(mappedBy = "users", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, orphanRemoval = true)
-//	private Set<Product> products;
-//	
-	
-	
-	
-	
-	
 	
 }

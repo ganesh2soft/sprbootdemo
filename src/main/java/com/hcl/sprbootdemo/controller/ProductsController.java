@@ -33,7 +33,7 @@ public class ProductsController {
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/addproducts")
 	public ResponseEntity<ProductDTO> addProduct(@RequestBody ProductDTO productDTO) {
-		System.out.println("Control came to add prdt");
+		
 		ProductDTO savedProduct = productsService.saveProduct(productDTO);
 		return new ResponseEntity<ProductDTO>(savedProduct, HttpStatus.CREATED);
 

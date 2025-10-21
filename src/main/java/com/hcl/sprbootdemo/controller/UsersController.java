@@ -97,8 +97,8 @@ public class UsersController {
 			Thread.currentThread().interrupt();
 		}
 				
-		String hr=httpServletResponse.getHeader(SecurityConstants.JWT_HEADER);		
-		System.out.println("hr"+hr);		
+		
+				
 		HttpHeaders headers = new HttpHeaders();			
 		ResponseEntity<Users> responseEntity = new ResponseEntity<>(usersObj,headers,HttpStatus.OK);		
 		logger.info("Output to React  {}",responseEntity);
