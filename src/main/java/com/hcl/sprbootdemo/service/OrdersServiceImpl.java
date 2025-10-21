@@ -61,15 +61,20 @@ public class OrdersServiceImpl implements OrdersService {
 
 	@Override
 	public List<OrderDTO> getAllOrders() {
-		List<Orders> orders = ordersRepository.findAll();
-		return orders.stream().map(order -> modelMapper.map(order, OrderDTO.class)).collect(Collectors.toList());
+	    List<Orders> orders = ordersRepository.findAll();
+	    return orders.stream()
+	                 .map(order -> modelMapper.map(order, OrderDTO.class))
+	                 .toList(); // Cleaner and more idiomatic in modern Java
 	}
+
 
 	@Override
 	public List<OrderDTO> getOrdersByEmail(String email) {
 		List<Orders> orders = ordersRepository.findByEmail(email);
 		System.out.println("Received email at order by email" + email);
-		return orders.stream().map(order -> modelMapper.map(order, OrderDTO.class)).collect(Collectors.toList());
+		return orders.stream()
+				.map(order -> modelMapper.map(order, OrderDTO.class))
+				.toList();
 	}
 
 	@Override

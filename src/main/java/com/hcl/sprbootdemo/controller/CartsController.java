@@ -50,7 +50,7 @@ public class CartsController {
 
     @GetMapping("/userrelated/cart/{email}")
     public ResponseEntity<CartsDTO> getCartByemail(@PathVariable String email) {
-    	logger.info("At Controller, received input from React "+email);
+    	logger.info("At Controller, received input from React: {}", email);
     	CartsDTO cartDTO = cartsService.getCart(email);
         return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
@@ -74,8 +74,10 @@ public class CartsController {
             @PathVariable String email,
             @RequestBody List<Long> productIds) {
         
-        logger.info("Cart deletion for user: " + email);
-        logger.info("productIds: " + productIds);
+        logger.info("Cart deletion for user: {}" , email);
+        logger.info("productIds: {}" , productIds);
+        //logger.info("productIds: {}", String.join(",", productIds));
+
         
         try {
             cartsService.deleteProductsFromUserCart(email, productIds);

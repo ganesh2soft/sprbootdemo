@@ -64,7 +64,7 @@ public class ProdServiceImpl implements ProductsService {
 
 				.orElseThrow(() -> new ResourceNotFoundException("Product", "productId", productId));
 		productsRepository.delete(product);
-		logger.info("Product " + productId + " deleted successfully !!!");
+		logger.info("Product {} deleted successfully !!!", productId);
 
 	}
 

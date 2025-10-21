@@ -89,7 +89,7 @@ public class UsersController {
 	public ResponseEntity<Users> processLoginRequest() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Users usersObj = usersRepo.findUsersByEmail(auth.getName());
-		logger.info("Response body user details=========" + usersObj);
+		logger.info("Response body user details {}" , usersObj);
 		try {
 			
 			Thread.sleep(2000);
@@ -101,7 +101,7 @@ public class UsersController {
 		System.out.println("hr"+hr);		
 		HttpHeaders headers = new HttpHeaders();			
 		ResponseEntity<Users> responseEntity = new ResponseEntity<>(usersObj,headers,HttpStatus.OK);		
-		logger.info("Return result to React front end as below"+responseEntity);
+		logger.info("Output to React  {}",responseEntity);
 		
 		return responseEntity;
 		}

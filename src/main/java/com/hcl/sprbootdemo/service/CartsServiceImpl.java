@@ -75,8 +75,8 @@ public class CartsServiceImpl implements CartsService {
 	
 	@Transactional
 	public void addToCart(String userEmail, Long productId, int quantity) {
-		logger.info("Received from front end"+productId);
-		logger.info("Received from front end"+quantity);
+		logger.info("Received from react, Product ID {}",productId);
+		logger.info("Received from react, Quantity are {}",quantity);
 	    // 1. Find user by email using Optional
 	    Users user = usersRepository.findByEmail(userEmail)
 	            .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
@@ -87,7 +87,7 @@ public class CartsServiceImpl implements CartsService {
 	                Carts newCart = new Carts();
 	                newCart.setUser(user);
 	                Carts savedCart = cartsRepository.save(newCart);
-	                logger.info("Cart created for user after save: " + savedCart);
+	                logger.info("Cart created for user after save: {}" , savedCart);
 	                return savedCart;
 	            });
 
@@ -128,7 +128,7 @@ public class CartsServiceImpl implements CartsService {
 	    cartsRepository.save(cart);
 
 	    // 6. Optional: log updated cart for debugging
-	    logger.info("Cart after adding item: " + cart);
+	    logger.info("Cart after adding item: {} ",cart);
 	}
 
 	
@@ -154,7 +154,7 @@ public class CartsServiceImpl implements CartsService {
 				.map(item -> modelMapper.map(item.getProduct(), ProductDTO.class)).toList();
 
 		cartDTO.setProducts(products);
-		logger.info("CART STATUS at getCart "+cartDTO.toString());
+		logger.info("CART STATUS at getCart {} ",cartDTO.toString());
 
 		return cartDTO;
 	}
@@ -276,7 +276,7 @@ public class CartsServiceImpl implements CartsService {
 		cart.setTotalPrice(0.00);
 		cart.setUser(authUtil.loggedInUser());
 		Carts newCart = cartsRepository.save(cart);
-		logger.info("New cart created in Createcart" + newCart);
+		logger.info("New cart created in Createcart {}" , newCart);
 		return newCart;
 	}
 

@@ -42,17 +42,16 @@ public class UserAuthConfig implements AuthenticationProvider {
 		 * Object credentials = authentication.getCredentials().toString();
 		 */
 		String pwd = authentication.getCredentials().toString();
-		logger.info("Username's Email ID refered as username :-----------" + username);
-		logger.info("Supplied password " + pwd);
-		logger.info("Fetching from DB" + usersRepository.findUsersByEmail(username));
+		logger.info("Username's Email ID refered as username :{}" + username);
+	
+		logger.info("Fetching from DB {}" , usersRepository.findUsersByEmail(username));
 		Users usersObj = usersRepository.findUsersByEmail(username);
-		String encryptedPwd = pwdEncoder.encode(pwd);
-		logger.info("Encrypted Password" + encryptedPwd);
-		logger.info("User Object is" + usersObj);
+	
+		logger.info("User Object is {}", usersObj);
 		if (usersObj == null) {
 			throw new UsernameNotFoundException("User not found: " + username);
 		} else if (pwdEncoder.matches(pwd, usersObj.getPassword())) {
-			logger.info(" Password true just printing" + usersObj);
+			logger.info(" As password matched, User obj {} is", usersObj);
 			List<GrantedAuthority> authorities = new ArrayList<>();
 			authorities.add(new SimpleGrantedAuthority(usersObj.getRoles()));
 			return new UsernamePasswordAuthenticationToken(username, pwd, authorities);
