@@ -1,28 +1,11 @@
 package com.hcl.sprbootdemo.service;
 
-import jakarta.transaction.Transactional;
-
-import org.hibernate.query.Order;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import com.hcl.sprbootdemo.entity.Carts;
-import com.hcl.sprbootdemo.entity.CartItem;
 import com.hcl.sprbootdemo.entity.Orders;
-import com.hcl.sprbootdemo.entity.OrderItem;
-import com.hcl.sprbootdemo.entity.Payments;
-import com.hcl.sprbootdemo.entity.Products;
-import com.hcl.sprbootdemo.exception.APIException;
-import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
 import com.hcl.sprbootdemo.payload.OrderDTO;
-import com.hcl.sprbootdemo.payload.OrderItemDTO;
-import com.hcl.sprbootdemo.payload.OrderResponse;
-import com.hcl.sprbootdemo.payload.PaymentDTO;
 import com.hcl.sprbootdemo.repository.CartsRepository;
 
 import com.hcl.sprbootdemo.repository.OrderItemRepository;
@@ -30,10 +13,7 @@ import com.hcl.sprbootdemo.repository.OrdersRepository;
 import com.hcl.sprbootdemo.repository.PaymentRepository;
 import com.hcl.sprbootdemo.repository.ProductsRepository;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class OrdersServiceImpl implements OrdersService {

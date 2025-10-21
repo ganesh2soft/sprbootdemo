@@ -59,10 +59,11 @@ public class CartItem {
 	/*
 	 * This is important. Otherwise cyclic things will happen. Cart calls Cartitems, Cartitem calls Cart
 	 * @Override
-	   public String toString() {
-		return "CartItem [cartItemId=" + cartItemId + ", cart=" + cart + ", product=" + product + ", quantity="
-				+ quantity + ", discount=" + discount + ", productPrice=" + productPrice + "]";
-	}
+	 * public String toString() {
+	 *	return "CartItem [cartItemId=" + cartItemId + ", cart=" + cart + ", product=" + product + ", quantity="
+	 *			+ quantity + ", discount=" + discount + ", productPrice=" + productPrice + "]";
+	 * }
+	 * 	
 	 */
 	
 	public CartItem() {
