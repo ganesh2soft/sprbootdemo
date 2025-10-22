@@ -267,17 +267,13 @@ public class CartsServiceImpl implements CartsService {
 	    cartsRepository.save(cart);
 	}
 	
-	private Carts createCart() {
-		Carts userCart = cartsRepository.findCartByEmail(authUtil.loggedInEmail());
-		if (userCart != null) {			
-			return userCart;
-		}
-		Carts cart = new Carts();
-		cart.setTotalPrice(0.00);
-		cart.setUser(authUtil.loggedInUser());
-		Carts newCart = cartsRepository.save(cart);
-		logger.info("New cart created in Createcart {}" , newCart);
-		return newCart;
-	}
+	/*
+	 * private Carts createCart() { Carts userCart =
+	 * cartsRepository.findCartByEmail(authUtil.loggedInEmail()); if (userCart !=
+	 * null) { return userCart; } Carts cart = new Carts();
+	 * cart.setTotalPrice(0.00); cart.setUser(authUtil.loggedInUser()); Carts
+	 * newCart = cartsRepository.save(cart);
+	 * logger.info("New cart created in Createcart {}" , newCart); return newCart; }
+	 */
 
 }
