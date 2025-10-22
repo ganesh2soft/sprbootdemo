@@ -15,7 +15,7 @@ public class OrderDTO {
 
 	public OrderDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public OrderDTO(Long orderId, String email, List<OrderItemDTO> orderItems, LocalDate orderDate, PaymentDTO payment,

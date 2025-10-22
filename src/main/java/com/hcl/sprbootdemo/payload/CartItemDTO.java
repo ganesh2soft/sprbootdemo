@@ -13,7 +13,7 @@ public class CartItemDTO {
 
 	public CartItemDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+	
 	}
 
 	public CartItemDTO(Long cartItemId, CartsDTO cart, Products product, Integer quantity, double discount,

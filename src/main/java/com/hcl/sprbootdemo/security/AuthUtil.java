@@ -23,7 +23,8 @@ public class AuthUtil {
 		}
 		return user.getEmail();
 	}
-
+	/*
+	 * NOSONAR
 	public Long loggedInUserId() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		Users user = usersRepository.findUsersByEmail(authentication.getName());
@@ -43,5 +44,5 @@ public class AuthUtil {
 		return user;
 
 	}
-
+*/
 }

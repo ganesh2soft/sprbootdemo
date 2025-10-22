@@ -1,7 +1,7 @@
 package com.hcl.sprbootdemo.payload;
 
 import com.hcl.sprbootdemo.entity.Category;
-//POJO   -- Plain Old Java Object
+
 public class ProductDTO {
 	private Long productId;
 	private Category category;
@@ -14,7 +14,7 @@ public class ProductDTO {
 	
 	public ProductDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public ProductDTO(Long productId, Category category, String productName, String brandName, Integer quantity, double price,

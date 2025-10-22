@@ -10,7 +10,7 @@ public class OrderRequestDTO {
 
 	public OrderRequestDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public OrderRequestDTO(String address, String paymentMethod, String pgName, String pgPaymentId, String pgStatus,

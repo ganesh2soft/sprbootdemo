@@ -16,7 +16,7 @@ import org.springframework.web.filter.CorsFilter;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
-@EnableWebSecurity(debug=true)
+@EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 

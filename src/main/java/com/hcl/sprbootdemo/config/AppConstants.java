@@ -1,6 +1,10 @@
 package com.hcl.sprbootdemo.config;
 
 public class AppConstants {
+	private AppConstants() {
+	    throw new UnsupportedOperationException("Utility class");
+	}
+
     public static final String PAGE_NUMBER = "0";
     public static final String PAGE_SIZE = "10";
     public static final String SORT_CATEGORIES_BY = "categoryId";

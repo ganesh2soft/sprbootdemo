@@ -10,7 +10,7 @@ public class PaymentDTO {
 
 	public PaymentDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+	
 	}
 
 	public PaymentDTO(Long paymentId, String paymentMethod, String pgPaymentId, String pgStatus,

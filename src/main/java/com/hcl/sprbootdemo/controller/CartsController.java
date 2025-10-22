@@ -28,7 +28,7 @@ public class CartsController {
 		return "Cart Controller response!";
 	}
 	@PostMapping("/addToCart")
-    public ResponseEntity<?> addToCart(@RequestBody AddToCartRequest request, Principal principal) {
+    public ResponseEntity<String> addToCart(@RequestBody AddToCartRequest request, Principal principal) {
         String userEmail = principal.getName();
            
 
@@ -74,20 +74,28 @@ public class CartsController {
             @PathVariable String email,
             @RequestBody List<Long> productIds) {
         
-        logger.info("Cart deletion for user: {}" , email);
-        logger.info("productIds: {}" , productIds);
-     
+        logger.info("Cart deletion request for user: {}", email);
+        logger.info("Product IDs to delete: {}", productIds);
 
-        
+        if (productIds == null || productIds.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Product IDs list cannot be empty"));
+        }
+
         try {
             cartsService.deleteProductsFromUserCart(email, productIds);
             return ResponseEntity.ok(new MessageResponse("Selected products removed from cart successfully"));
+        } catch (ResourceNotFoundException rnfe) {
+            logger.warn("Resource not found during deleteProductsFromUserCart", rnfe);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                 .body(new MessageResponse(rnfe.getMessage()));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Failed to remove products from cart for user: {}", email, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                  .body(new MessageResponse("Failed to remove products from cart"));
         }
     }
+
 
 }
 

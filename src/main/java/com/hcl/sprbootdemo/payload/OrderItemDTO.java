@@ -11,7 +11,7 @@ public class OrderItemDTO {
 
 	public OrderItemDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public OrderItemDTO(Long orderItemId, Products product, Integer quantity, double discount,

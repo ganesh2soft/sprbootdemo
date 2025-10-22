@@ -12,7 +12,7 @@ public class  CartsDTO{
 
 	public CartsDTO() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public CartsDTO(Long cartId, Double totalPrice, List<ProductDTO> products) {

@@ -12,7 +12,7 @@ public class OrderResponse {
 
 	public OrderResponse() {
 		super();
-		// TODO Auto-generated constructor stub
+		
 	}
 
 	public OrderResponse(List<OrderDTO> content, Integer pageNumber, Integer pageSize, Long totalElements,

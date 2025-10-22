@@ -32,7 +32,7 @@ public class UserAuthConfig implements AuthenticationProvider {
 	
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		/*
+		/* NOSONAR
 		 * Below 2 lines are getting User inputs at login page Authentication auth =
 		 * SecurityContextHolder.getContext().getAuthentication(); String username =
 		 * auth.getName(); Object credentials = auth.getCredentials();
