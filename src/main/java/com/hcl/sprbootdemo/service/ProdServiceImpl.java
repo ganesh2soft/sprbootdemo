@@ -47,16 +47,16 @@ public class ProdServiceImpl implements ProductsService {
 
 	}
 
+	
 	@Override
 	public List<ProductDTO> getAllProducts() {
-		List<Products> products = productsRepository.findAll();
-		List<ProductDTO> productDTOS = products.stream().map(product -> {
-			return modelMapper.map(product, ProductDTO.class);
-		}
-
-		).collect(Collectors.toList());
-		return productDTOS;
+	    List<Products> products = productsRepository.findAll();
+	    List<ProductDTO> productDTOS = products.stream()
+	            .map(product -> modelMapper.map(product, ProductDTO.class))
+	            .toList();
+	    return productDTOS;
 	}
+
 
 	@Override
 	public void deleteProduct(Long productId) {

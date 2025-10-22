@@ -25,7 +25,6 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 @Service
 @Transactional
 public class CartsServiceImpl implements CartsService {
@@ -42,101 +41,97 @@ public class CartsServiceImpl implements CartsService {
 
 	@Autowired
 	private ModelMapper modelMapper;
-	
+
 	@Autowired
 	private AuthUtil authUtil;
-	
+
 	@Autowired
 	private UsersRepository usersRepository;
-	
-	
+
 	@Override
 	public List<CartsDTO> getAllCarts() {
-		List<Carts> carts = cartsRepository.findAll();
+	    List<Carts> carts = cartsRepository.findAll();
 
-		if (carts.size() == 0) {
-			throw new APIException("No cart exists");
-		}
-
-		List<CartsDTO> cartDTOs = carts.stream().map(cart -> {
-			CartsDTO cartDTO = modelMapper.map(cart, CartsDTO.class);
-
-			List<ProductDTO> products = cart.getCartItems().stream()
-					.map(p -> modelMapper.map(p.getProduct(), ProductDTO.class)).collect(Collectors.toList());
-
-			cartDTO.setProducts(products);
-
-			return cartDTO;
-
-		}).collect(Collectors.toList());
-
-		return cartDTOs;
-	}
-	
-	@Transactional
-	public void addToCart(String userEmail, Long productId, int quantity) {
-		logger.info("Received from react, Product ID {}",productId);
-		logger.info("Received from react, Quantity are {}",quantity);
-	    // 1. Find user by email using Optional
-	    Users user = usersRepository.findByEmail(userEmail)
-	            .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
-
-	    // 2. Find or create cart for user
-	    Carts cart = cartsRepository.findByUserEmail(userEmail)
-	            .orElseGet(() -> {
-	                Carts newCart = new Carts();
-	                newCart.setUser(user);
-	                Carts savedCart = cartsRepository.save(newCart);
-	                logger.info("Cart created for user after save: {}" , savedCart);
-	                return savedCart;
-	            });
-
-	    // 2.1 Reload the cart to make sure it's managed and fully loaded
-	    cart = cartsRepository.findById(cart.getCartId())
-	            .orElseThrow(() -> new ResourceNotFoundException("Cart not found after creation"));
-	    
-
-	    // 3. Find product by ID
-	    Products product = productsRepository.findById(productId)
-	            .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
-	    
-	    // 4. Check if product already exists in cart
-	    Optional<CartItem> existingCartItemOpt = cart.getCartItems().stream()
-	            .filter(item -> item.getProduct().getProductId().equals(productId))
-	            .findFirst();
-	    
-	    if (existingCartItemOpt.isPresent()) {
-	        // Update quantity
-	    	 
-	        CartItem existingCartItem = existingCartItemOpt.get();
-	        existingCartItem.setQuantity(existingCartItem.getQuantity() + quantity);
-	        cartItemRepository.save(existingCartItem);
-	    } else {
-	        // Add new cart item
-	        CartItem newCartItem = new CartItem();
-	        
-	        newCartItem.setCart(cart); // cart has ID and is managed
-	        newCartItem.setProduct(product);
-	        newCartItem.setQuantity(quantity);
-	        cartItemRepository.save(newCartItem);
-
-	        // Also add it to cart's internal list
-	        cart.getCartItems().add(newCartItem);
+	    if (carts.isEmpty()) {
+	        throw new APIException("No cart exists");
 	    }
 
-	    // 5. Save the cart again to persist changes to cartItems list if necessary
-	    cartsRepository.save(cart);
+	    return carts.stream()
+	        .map(cart -> {
+	            CartsDTO cartDTO = modelMapper.map(cart, CartsDTO.class);
 
-	    // 6. Optional: log updated cart for debugging
-	    logger.info("Cart after adding item: {} ",cart);
+	            List<ProductDTO> products = cart.getCartItems().stream()
+	                .map(item -> modelMapper.map(item.getProduct(), ProductDTO.class))
+	                .toList();
+
+	            cartDTO.setProducts(products);
+
+	            return cartDTO;
+	        })
+	        .toList();
 	}
 
-	
+
+	@Transactional
+	public void addToCart(String userEmail, Long productId, int quantity) {
+		logger.info("Received from react, Product ID {}", productId);
+		logger.info("Received from react, Quantity are {}", quantity);
+		// 1. Find user by email using Optional
+		Users user = usersRepository.findByEmail(userEmail)
+				.orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+
+		// 2. Find or create cart for user
+		Carts cart = cartsRepository.findByUserEmail(userEmail).orElseGet(() -> {
+			Carts newCart = new Carts();
+			newCart.setUser(user);
+			Carts savedCart = cartsRepository.save(newCart);
+			logger.info("Cart created for user after save: {}", savedCart);
+			return savedCart;
+		});
+
+		// 2.1 Reload the cart to make sure it's managed and fully loaded
+		cart = cartsRepository.findById(cart.getCartId())
+				.orElseThrow(() -> new ResourceNotFoundException("Cart not found after creation"));
+
+		// 3. Find product by ID
+		Products product = productsRepository.findById(productId)
+				.orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
+
+		// 4. Check if product already exists in cart
+		Optional<CartItem> existingCartItemOpt = cart.getCartItems().stream()
+				.filter(item -> item.getProduct().getProductId().equals(productId)).findFirst();
+
+		if (existingCartItemOpt.isPresent()) {
+			// Update quantity
+
+			CartItem existingCartItem = existingCartItemOpt.get();
+			existingCartItem.setQuantity(existingCartItem.getQuantity() + quantity);
+			cartItemRepository.save(existingCartItem);
+		} else {
+			// Add new cart item
+			CartItem newCartItem = new CartItem();
+
+			newCartItem.setCart(cart); // cart has ID and is managed
+			newCartItem.setProduct(product);
+			newCartItem.setQuantity(quantity);
+			cartItemRepository.save(newCartItem);
+
+			// Also add it to cart's internal list
+			cart.getCartItems().add(newCartItem);
+		}
+
+		// 5. Save the cart again to persist changes to cartItems list if necessary
+		cartsRepository.save(cart);
+
+		// 6. Optional: log updated cart for debugging
+		logger.info("Cart after adding item: {} ", cart);
+	}
+
 	@Override
 	public CartsDTO getCart(String email) {
-		
+
 		Carts cart = cartsRepository.findCartByEmail(email);
-		
+
 		if (cart == null) {
 			throw new ResourceNotFoundException("Cart not found for email: " + email);
 		}
@@ -154,11 +149,10 @@ public class CartsServiceImpl implements CartsService {
 				.map(item -> modelMapper.map(item.getProduct(), ProductDTO.class)).toList();
 
 		cartDTO.setProducts(products);
-		
 
 		return cartDTO;
 	}
-	
+
 	@Transactional
 	@Override
 	public String deleteProductFromCart(Long cartId, Long productId) {
@@ -176,8 +170,8 @@ public class CartsServiceImpl implements CartsService {
 		cartItemRepository.deleteCartItemByProductIdAndCartId(cartId, productId);
 
 		return "Product " + cartItem.getProduct().getProductName() + " removed from the cart !!!";
-	}	
-	
+	}
+
 	@Transactional
 	@Override
 	public CartsDTO updateProductQuantityInCart(Long productId, Integer quantity) {
@@ -244,29 +238,25 @@ public class CartsServiceImpl implements CartsService {
 
 		return cartDTO;
 	}
-			
 
 	@Override
 	@Transactional
 	public void deleteProductsFromUserCart(String email, List<Long> productIds) {
-	    // Fetch the user's cart
-	    Carts cart = cartsRepository.findByUserEmail(email)
-	            .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user: " + email));
+		// Fetch the user's cart
+		Carts cart = cartsRepository.findByUserEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("Cart not found for user: " + email));
 
-	    // Remove CartItems associated with the specified product IDs
-	    cart.getCartItems().removeIf(cartItem -> 
-	        productIds.contains(cartItem.getProduct().getProductId())
-	    );
+		// Remove CartItems associated with the specified product IDs
+		cart.getCartItems().removeIf(cartItem -> productIds.contains(cartItem.getProduct().getProductId()));
 
-	    // Recalculate the total price after removal
-	    cart.setTotalPrice(cart.getCartItems().stream()
-	            .mapToDouble(cartItem -> cartItem.getProductPrice() * cartItem.getQuantity())
-	            .sum());
+		// Recalculate the total price after removal
+		cart.setTotalPrice(cart.getCartItems().stream()
+				.mapToDouble(cartItem -> cartItem.getProductPrice() * cartItem.getQuantity()).sum());
 
-	    // Save the updated cart
-	    cartsRepository.save(cart);
+		// Save the updated cart
+		cartsRepository.save(cart);
 	}
-	
+
 	/*
 	 * private Carts createCart() { Carts userCart =
 	 * cartsRepository.findCartByEmail(authUtil.loggedInEmail()); if (userCart !=
