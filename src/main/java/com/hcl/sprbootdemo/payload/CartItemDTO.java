@@ -1,78 +1,39 @@
 package com.hcl.sprbootdemo.payload;
 
-import com.hcl.sprbootdemo.entity.Products;
-
 public class CartItemDTO {
-
-	private Long cartItemId;
-	private CartsDTO cart;
-	private Products product;
-	private Integer quantity;
-	private double discount;
-	private double productPrice;
-
-	public CartItemDTO() {
-		super();
-	
-	}
-
-	public CartItemDTO(Long cartItemId, CartsDTO cart, Products product, Integer quantity, double discount,
-			double productPrice) {
-		super();
-		this.cartItemId = cartItemId;
-		this.cart = cart;
-		this.product = product;
-		this.quantity = quantity;
-		this.discount = discount;
-		this.productPrice = productPrice;
-	}
-
+    private Long cartItemId;
+    private ProductDTO product;   // the product info
+    private Integer placedQty;    // quantity added to cart
+       // any discount applied
 	public Long getCartItemId() {
 		return cartItemId;
 	}
-
 	public void setCartItemId(Long cartItemId) {
 		this.cartItemId = cartItemId;
 	}
-
-	public CartsDTO getCart() {
-		return cart;
-	}
-
-	public void setCart(CartsDTO cart) {
-		this.cart = cart;
-	}
-
-	public Products getProduct() {
+	public ProductDTO getProduct() {
 		return product;
 	}
-
-	public void setProduct(Products product) {
+	public void setProduct(ProductDTO product) {
 		this.product = product;
 	}
-
-	public Integer getQuantity() {
-		return quantity;
+	public Integer getPlacedQty() {
+		return placedQty;
+	}
+	public void setPlacedQty(Integer placedQty) {
+		this.placedQty = placedQty;
+	}
+	public CartItemDTO(Long cartItemId, ProductDTO product, Integer placedQty) {
+		super();
+		this.cartItemId = cartItemId;
+		this.product = product;
+		this.placedQty = placedQty;
+	}
+	public CartItemDTO() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
-	}
-
-	public double getDiscount() {
-		return discount;
-	}
-
-	public void setDiscount(double discount) {
-		this.discount = discount;
-	}
-
-	public double getProductPrice() {
-		return productPrice;
-	}
-
-	public void setProductPrice(double productPrice) {
-		this.productPrice = productPrice;
-	}
-
+    // Getters and Setters
+    
 }

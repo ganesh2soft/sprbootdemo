@@ -13,6 +13,8 @@ import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
 import com.hcl.sprbootdemo.payload.PaymentDTO;
 import com.hcl.sprbootdemo.repository.CartsRepository;
 import com.hcl.sprbootdemo.repository.PaymentRepository;
+
+import jakarta.transaction.Transactional;
 @Service
 public class PaymentServiceImpl implements PaymentService {
 	@Autowired
@@ -31,6 +33,7 @@ public class PaymentServiceImpl implements PaymentService {
 	}
 
 	@Override
+	@Transactional
 	public void payForCart(String email) {
 	    // Fetch the user's cart
 	    Carts cart = cartsRepository.findByUserEmail(email)
@@ -41,13 +44,13 @@ public class PaymentServiceImpl implements PaymentService {
 
 	    if (paymentSuccessful) {
 	        // Remove purchased products from the cart
-	        cart.getCartItems().clear();
-	        cart.setTotalPrice(0.0);
+	        cart.getCartItems().clear(); // orphanRemoval will delete CartItems
 	        cartsRepository.save(cart);
 	    } else {
 	        throw new APIException("Payment processing failed.");
 	    }
 	}
+
 
 	private boolean processPayment(Carts cart) {
 	    // Integrate with your payment gateway here
