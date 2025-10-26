@@ -1,6 +1,8 @@
 package com.hcl.sprbootdemo.entity;
 
 
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -26,6 +28,7 @@ public class Products {
 	private double price;
 	private double discount;
 	private double specialPrice;
+	private String imageURL;
 	public Long getProductId() {
 		return productId;
 	}
@@ -74,14 +77,42 @@ public class Products {
 	public void setSpecialPrice(double specialPrice) {
 		this.specialPrice = specialPrice;
 	}
+	public String getImageURL() {
+		return imageURL;
+	}
+	public void setImageURL(String imageURL) {
+		this.imageURL = imageURL;
+	}
+	@Override
+	public int hashCode() {
+		return Objects.hash(brandName, category, discount, imageURL, price, productId, productName, quantity,
+				specialPrice);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Products other = (Products) obj;
+		return Objects.equals(brandName, other.brandName) && category == other.category
+				&& Double.doubleToLongBits(discount) == Double.doubleToLongBits(other.discount)
+				&& Objects.equals(imageURL, other.imageURL)
+				&& Double.doubleToLongBits(price) == Double.doubleToLongBits(other.price)
+				&& Objects.equals(productId, other.productId) && Objects.equals(productName, other.productName)
+				&& Objects.equals(quantity, other.quantity)
+				&& Double.doubleToLongBits(specialPrice) == Double.doubleToLongBits(other.specialPrice);
+	}
 	@Override
 	public String toString() {
-		return "Product [productId=" + productId + ", category=" + category + ", productName=" + productName
+		return "Products [productId=" + productId + ", category=" + category + ", productName=" + productName
 				+ ", brandName=" + brandName + ", quantity=" + quantity + ", price=" + price + ", discount=" + discount
-				+ ", specialPrice=" + specialPrice + "]";
+				+ ", specialPrice=" + specialPrice + ", imageURL=" + imageURL + "]";
 	}
 	public Products(Long productId, Category category, String productName, String brandName, Integer quantity,
-			double price, double discount, double specialPrice) {
+			double price, double discount, double specialPrice, String imageURL) {
 		super();
 		this.productId = productId;
 		this.category = category;
@@ -91,12 +122,12 @@ public class Products {
 		this.price = price;
 		this.discount = discount;
 		this.specialPrice = specialPrice;
+		this.imageURL = imageURL;
 	}
 	public Products() {
 		super();
 		
 	}
-	 
 	
 }
 

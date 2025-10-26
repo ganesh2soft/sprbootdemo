@@ -8,17 +8,27 @@ import java.util.List;
 public class  CartsDTO{
 	private Long cartId;
 	private Double totalPrice = 0.0;
+	private Long userId;
+	
+
 	private List<ProductDTO> products = new ArrayList<>();
 
 	public CartsDTO() {
 		super();
 		
 	}
+	public Long getUserId() {
+		return userId;
+	}
 
-	public CartsDTO(Long cartId, Double totalPrice, List<ProductDTO> products) {
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+	public CartsDTO(Long cartId, Double totalPrice,Long userId, List<ProductDTO> products) {
 		super();
 		this.cartId = cartId;
 		this.totalPrice = totalPrice;
+		this.userId=userId;
 		this.products = products;
 	}
 

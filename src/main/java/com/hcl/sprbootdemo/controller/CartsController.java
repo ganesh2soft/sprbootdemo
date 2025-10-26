@@ -45,6 +45,7 @@ public class CartsController {
     @GetMapping("/getcarts")
     public ResponseEntity<List<CartsDTO>> getCarts() {
         List<CartsDTO> cartDTOs = cartsService.getAllCarts();
+        System.out.println(cartDTOs.toString());
         return new ResponseEntity<>(cartDTOs, HttpStatus.OK);
     }
 
