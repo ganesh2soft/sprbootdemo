@@ -82,50 +82,46 @@ public class CartsServiceImpl implements CartsService {
 	}
 
 	@Transactional
-	public void addToCart(String userEmail, Long productId, int quantity) {
-	    logger.info("Adding Product ID {} with quantity {} for user {}", productId, quantity, userEmail);
-
-	    // 1. Find user
+	public void addToCart(String userEmail, Long productId, int qtyToAdd) {
 	    Users user = usersRepository.findByEmail(userEmail)
-	            .orElseThrow(() -> new ResourceNotFoundException("User not found with email: " + userEmail));
+	        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-	    // 2. Find or create cart for user
-	    Carts cart = cartsRepository.findByUserEmail(userEmail).orElseGet(() -> {
-	        Carts newCart = new Carts();
-	        newCart.setUser(user);
-	        return cartsRepository.save(newCart);
-	    });
-
-	    // 3. Find product
 	    Products product = productsRepository.findById(productId)
-	            .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + productId));
+	        .orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
-	    // 4. Check if product already exists in cart
-	    Optional<CartItem> existingCartItemOpt = cart.getCartItems().stream()
-	            .filter(item -> item.getProduct().getProductId().equals(productId))
-	            .findFirst();
-
-	    if (existingCartItemOpt.isPresent()) {
-	        // Update placed quantity
-	        CartItem existingCartItem = existingCartItemOpt.get();
-	        existingCartItem.setPlacedQty(existingCartItem.getPlacedQty() + quantity);
-	        cartItemRepository.save(existingCartItem);
-	    } else {
-	        // Add new cart item
-	        CartItem newCartItem = new CartItem();
-	        newCartItem.setCart(cart);
-	        newCartItem.setProduct(product);
-	        newCartItem.setPlacedQty(quantity);
-	        cartItemRepository.save(newCartItem);
-
-	        // Add to cart's internal list
-	        cart.getCartItems().add(newCartItem);
+	    if (qtyToAdd > product.getQuantity()) {
+	        throw new APIException("Only " + product.getQuantity() + " units of " 
+	                               + product.getProductName() + " are available");
 	    }
 
-	    // Save cart if needed
-	    cartsRepository.save(cart);
+	    Carts cart = cartsRepository.findByUserEmail(userEmail)
+	        .orElseGet(() -> {
+	            Carts newCart = new Carts();
+	            newCart.setUser(user);
+	            return cartsRepository.save(newCart);
+	        });
 
-	    logger.info("Updated cart: {}", cart);
+	    Optional<CartItem> existing = cart.getCartItems().stream()
+	        .filter(item -> item.getProduct().getProductId().equals(productId))
+	        .findFirst();
+
+	    if (existing.isPresent()) {
+	        int newPlacedQty = existing.get().getPlacedQty() + qtyToAdd;
+	        if (newPlacedQty > product.getQuantity()) {
+	            throw new APIException("Cannot add " + qtyToAdd + " more units. Max available: " + product.getQuantity());
+	        }
+	        existing.get().setPlacedQty(newPlacedQty);
+	        cartItemRepository.save(existing.get());
+	    } else {
+	        CartItem newItem = new CartItem();
+	        newItem.setCart(cart);
+	        newItem.setProduct(product);
+	        newItem.setPlacedQty(qtyToAdd);
+	        cartItemRepository.save(newItem);
+	        cart.getCartItems().add(newItem);
+	    }
+
+	    cartsRepository.save(cart);
 	}
 
 
@@ -191,13 +187,13 @@ public class CartsServiceImpl implements CartsService {
 
 	@Transactional
 	@Override
-	public CartsDTO updateProductQuantityInCart(Long productId, Integer quantity) {
+	public CartsDTO updateProductQuantityInCart(Long productId, Integer quantityChange) {
 
-	    String emailId = authUtil.loggedInEmail();
-	    Carts cart = cartsRepository.findCartByEmail(emailId);
+	    String email = authUtil.loggedInEmail();
+	    Carts cart = cartsRepository.findCartByEmail(email);
 
 	    if (cart == null) {
-	        throw new ResourceNotFoundException("Cart not found for email: " + emailId);
+	        throw new ResourceNotFoundException("Cart not found for email: " + email);
 	    }
 
 	    Products product = productsRepository.findById(productId)
@@ -208,26 +204,28 @@ public class CartsServiceImpl implements CartsService {
 	        throw new APIException(product.getProductName() + " is not available");
 	    }
 
-	    if (product.getQuantity() < quantity) {
-	        throw new APIException("Please order " + product.getProductName() +
-	                " less than or equal to the available quantity: " + product.getQuantity());
-	    }
-
 	    CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(cart.getCartId(), productId);
 
 	    if (cartItem == null) {
-	        throw new APIException("Product " + product.getProductName() + " not in the cart!");
+	        throw new APIException("Product " + product.getProductName() + " is not in the cart!");
 	    }
 
-	    int newQuantity = cartItem.getPlacedQty() + quantity;
-	    if (newQuantity < 0) {
+	    // Calculate new quantity in cart
+	    int newPlacedQty = cartItem.getPlacedQty() + quantityChange;
+
+	    if (newPlacedQty > product.getQuantity()) {
+	        throw new APIException("Cannot set quantity. Only " + product.getQuantity() +
+	                               " units of " + product.getProductName() + " are available.");
+	    }
+
+	    if (newPlacedQty < 0) {
 	        throw new APIException("The resulting quantity cannot be negative.");
 	    }
 
-	    if (newQuantity == 0) {
+	    if (newPlacedQty == 0) {
 	        deleteProductFromCart(cart.getCartId(), productId);
 	    } else {
-	        cartItem.setPlacedQty(newQuantity);
+	        cartItem.setPlacedQty(newPlacedQty);
 	        cartItemRepository.save(cartItem);
 	    }
 
@@ -237,7 +235,7 @@ public class CartsServiceImpl implements CartsService {
 	    List<CartItemDTO> cartItemDTOs = cart.getCartItems().stream().map(item -> {
 	        CartItemDTO itemDTO = modelMapper.map(item, CartItemDTO.class);
 	        ProductDTO productDTO = modelMapper.map(item.getProduct(), ProductDTO.class);
-	        productDTO.setQuantity(item.getPlacedQty()); // quantity in cart
+	        productDTO.setQuantity(item.getPlacedQty()); // show quantity in cart
 	        itemDTO.setProduct(productDTO);
 	        return itemDTO;
 	    }).toList();
@@ -246,6 +244,7 @@ public class CartsServiceImpl implements CartsService {
 
 	    return cartDTO;
 	}
+
 
 
 	@Override
