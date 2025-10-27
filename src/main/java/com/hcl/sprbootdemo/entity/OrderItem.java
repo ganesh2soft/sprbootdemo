@@ -19,7 +19,7 @@ public class OrderItem {
 	@JoinColumn(name = "order_id")
 	private Orders order;
 
-	private Integer quantity;
+	private Integer placedQty;
 	private double discount;
 	private double orderedProductPrice;
 
@@ -47,12 +47,12 @@ public class OrderItem {
 		this.order = order;
 	}
 
-	public Integer getQuantity() {
-		return quantity;
+	public Integer getPlacedQty() {
+		return placedQty;
 	}
 
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
+	public void setPlacedQty(Integer placedQty) {
+		this.placedQty = placedQty;
 	}
 
 	public double getDiscount() {
@@ -73,17 +73,17 @@ public class OrderItem {
 
 	@Override
 	public String toString() {
-		return "OrderItem [orderItemId=" + orderItemId + ", product=" + product + ", order=" + order + ", quantity="
-				+ quantity + ", discount=" + discount + ", orderedProductPrice=" + orderedProductPrice + "]";
+		return "OrderItem [orderItemId=" + orderItemId + ", product=" + product + ", order=" + order + ", placedQty ="
+				+ placedQty + ", discount=" + discount + ", orderedProductPrice=" + orderedProductPrice + "]";
 	}
 
-	public OrderItem(Long orderItemId, Products product, Orders order, Integer quantity, double discount,
+	public OrderItem(Long orderItemId, Products product, Orders order, Integer placedQty , double discount,
 			double orderedProductPrice) {
 		super();
 		this.orderItemId = orderItemId;
 		this.product = product;
 		this.order = order;
-		this.quantity = quantity;
+		this.placedQty  = placedQty ;
 		this.discount = discount;
 		this.orderedProductPrice = orderedProductPrice;
 	}

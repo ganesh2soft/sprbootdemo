@@ -1,11 +1,9 @@
 package com.hcl.sprbootdemo.payload;
 
-import com.hcl.sprbootdemo.entity.Products;
-
 public class OrderItemDTO {
 	private Long orderItemId;
-	private Products product;
-	private Integer quantity;
+	private ProductDTO productDTO;
+	private Integer placedQty;
 	private double discount;
 	private double orderedProductPrice;
 
@@ -14,12 +12,12 @@ public class OrderItemDTO {
 		
 	}
 
-	public OrderItemDTO(Long orderItemId, Products product, Integer quantity, double discount,
+	public OrderItemDTO(Long orderItemId, ProductDTO productDTO, Integer placedQty, double discount,
 			double orderedProductPrice) {
 		super();
 		this.orderItemId = orderItemId;
-		this.product = product;
-		this.quantity = quantity;
+		this.productDTO = productDTO;
+		this.placedQty= placedQty;
 		this.discount = discount;
 		this.orderedProductPrice = orderedProductPrice;
 	}
@@ -32,20 +30,21 @@ public class OrderItemDTO {
 		this.orderItemId = orderItemId;
 	}
 
-	public Products getProduct() {
-		return product;
+	public ProductDTO getProductDTO() {
+	    return productDTO;
 	}
 
-	public void setProduct(Products product) {
-		this.product = product;
+
+	public void setProductDTO(ProductDTO productDTO) {
+		this.productDTO = productDTO;
 	}
 
-	public Integer getQuantity() {
-		return quantity;
+	public Integer getPlacedQty() {
+		return placedQty;
 	}
 
-	public void setQuantity(Integer quantity) {
-		this.quantity = quantity;
+	public void setPlacedQty(Integer placedQty) {
+		this.placedQty = placedQty;
 	}
 
 	public double getDiscount() {

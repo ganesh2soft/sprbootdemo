@@ -1,75 +1,141 @@
 package com.hcl.sprbootdemo.service;
 
+import com.hcl.sprbootdemo.entity.*;
+import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
+import com.hcl.sprbootdemo.payload.*;
+import com.hcl.sprbootdemo.repository.*;
+import com.hcl.sprbootdemo.service.OrdersService;
+
 import org.modelmapper.ModelMapper;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.hcl.sprbootdemo.entity.Orders;
-import com.hcl.sprbootdemo.payload.OrderDTO;
-import com.hcl.sprbootdemo.repository.CartsRepository;
-
-import com.hcl.sprbootdemo.repository.OrderItemRepository;
-import com.hcl.sprbootdemo.repository.OrdersRepository;
-import com.hcl.sprbootdemo.repository.PaymentRepository;
-import com.hcl.sprbootdemo.repository.ProductsRepository;
-
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrdersServiceImpl implements OrdersService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(OrdersServiceImpl.class);
 
-	@Autowired
-	CartsRepository cartsRepository;
+    @Autowired
+    private OrdersRepository ordersRepository;
 
-	@Autowired
-	OrderItemRepository orderItemRepository;
+    @Autowired
+    private UsersRepository usersRepository;
 
-	@Autowired
-	OrdersRepository ordersRepository;
+    @Autowired
+    private ProductsRepository productsRepository;
 
-	@Autowired
-	PaymentRepository paymentRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
-	@Autowired
-	CartsService cartService;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
-	@Autowired
-	ModelMapper modelMapper;
+    @Autowired
+    private ModelMapper modelMapper;
 
-	@Autowired
-	ProductsRepository productRepository;
+    @Override
+    public List<OrderDTO> getAllOrders() {
+        return ordersRepository.findAll()
+                .stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
 
-	@Override
-	public List<OrderDTO> getAllOrders() {
-	    List<Orders> orders = ordersRepository.findAll();
-	    return orders.stream()
-	                 .map(order -> modelMapper.map(order, OrderDTO.class))
-	                 .toList(); // Cleaner and more idiomatic in modern Java
-	}
+    @Override
+    public List<OrderDTO> getOrdersByEmail(String email) {
+        List<Orders> orders = ordersRepository.findByEmail(email);
+        return orders.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
 
+    @Override
+    @Transactional
+    public OrderDTO createOrder(String email, OrderDTO orderDTO) {
 
-	@Override
-	public List<OrderDTO> getOrdersByEmail(String email) {
-		List<Orders> orders = ordersRepository.findByEmail(email);
-		logger.info("Received email at order by email {}", email);
-		return orders.stream()
-				.map(order -> modelMapper.map(order, OrderDTO.class))
-				.toList();
-	}
+        Users user = usersRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
 
-	@Override
-	public OrderDTO updateOrder(Long orderId, OrderDTO updatedOrderDTO) {
-		Orders order = ordersRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        Orders order = new Orders();
+        order.setEmail(user.getEmail()); // ✅ just store email string
+        order.setOrderDate(LocalDate.now());
+        order.setOrderStatus("PENDING");
+        order.setTotalAmount(orderDTO.getTotalAmount());
+        order.setAddress(orderDTO.getAddress());
 
-		order.setOrderStatus(updatedOrderDTO.getOrderStatus());
-		order.setAddress(updatedOrderDTO.getAddress());
-		order.setTotalAmount(updatedOrderDTO.getTotalAmount());
-		order.setOrderDate(updatedOrderDTO.getOrderDate());
-		Orders updated = ordersRepository.save(order);
-		return modelMapper.map(updated, OrderDTO.class);
-	}
+        // ... then continue with your order items etc.
+        List<OrderItem> orderItems = orderDTO.getOrderItems().stream().map(itemDTO -> {
+            Products product = productsRepository.findById(itemDTO.getProductDTO().getProductId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product", "id", itemDTO.getProductDTO().getProductId()));
+
+            OrderItem item = new OrderItem();
+            item.setOrder(order);
+            item.setProduct(product);
+            item.setPlacedQty(itemDTO.getPlacedQty());
+            item.setDiscount(itemDTO.getDiscount());
+            item.setOrderedProductPrice(itemDTO.getOrderedProductPrice());
+
+            product.setQuantity(product.getQuantity() - itemDTO.getPlacedQty());
+            productsRepository.save(product);
+
+            return item;
+        }).collect(Collectors.toList());
+
+        order.setOrderItems(orderItems);
+        Orders savedOrder = ordersRepository.save(order);
+
+        return modelMapper.map(savedOrder, OrderDTO.class);
+    }
+
+    
+   
+
+    @Transactional
+    @Override
+    public OrderDTO updateOrder(Long orderId, OrderDTO updatedOrderDTO) {
+        Orders order = ordersRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
+
+        order.setOrderStatus(updatedOrderDTO.getOrderStatus());
+        order.setAddress(updatedOrderDTO.getAddress());
+        order.setTotalAmount(updatedOrderDTO.getTotalAmount());
+
+        // ✅ Update payment details if present
+        if (updatedOrderDTO.getPayment() != null) {
+            Payments payment = order.getPayment();
+            payment.setPgStatus(updatedOrderDTO.getPayment().getPgStatus());
+            payment.setPgResponseMessage(updatedOrderDTO.getPayment().getPgResponseMessage());
+            paymentRepository.save(payment);
+        }
+
+        ordersRepository.save(order);
+        return convertToDTO(order);
+    }
+
+    // 🔁 Entity → DTO mapping helper
+    private OrderDTO convertToDTO(Orders order) {
+        OrderDTO dto = modelMapper.map(order, OrderDTO.class);
+
+        if (order.getPayment() != null) {
+            dto.setPayment(modelMapper.map(order.getPayment(), PaymentDTO.class));
+        }
+
+        List<OrderItemDTO> orderItemDTOs = order.getOrderItems().stream()
+                .map(item -> {
+                    OrderItemDTO itemDTO = new OrderItemDTO();
+                    itemDTO.setOrderItemId(item.getOrderItemId());
+                    itemDTO.setPlacedQty(item.getPlacedQty());
+                    itemDTO.setDiscount(item.getDiscount());
+                    itemDTO.setOrderedProductPrice(item.getOrderedProductPrice());
+                    itemDTO.setProductDTO(modelMapper.map(item.getProduct(), ProductDTO.class));
+                    return itemDTO;
+                })
+                .collect(Collectors.toList());
+
+        dto.setOrderItems(orderItemDTOs);
+        return dto;
+    }
 }
