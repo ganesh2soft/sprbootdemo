@@ -40,6 +40,7 @@ public class OrdersController {
                 .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 
         List<OrderDTO> orders = ordersService.getOrdersByEmail(user.getEmail());
+        System.out.println("Orders "+ orders);
         return ResponseEntity.ok(orders);
     }
 

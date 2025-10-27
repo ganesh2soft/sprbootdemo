@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,9 +48,60 @@ public class OrdersServiceImpl implements OrdersService {
     @Override
     public List<OrderDTO> getOrdersByEmail(String email) {
         List<Orders> orders = ordersRepository.findByEmail(email);
-        return orders.stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        List<OrderDTO> orderDTOs = new ArrayList<>();
+
+        for (Orders order : orders) {
+            OrderDTO dto = new OrderDTO();
+            dto.setOrderId(order.getOrderId());
+            dto.setEmail(order.getEmail());
+            dto.setOrderDate(order.getOrderDate());
+            dto.setTotalAmount(order.getTotalAmount());
+            dto.setOrderStatus(order.getOrderStatus());
+            dto.setAddress(order.getAddress());
+
+            // ✅ Payment mapping
+            if (order.getPayment() != null) {
+                PaymentDTO paymentDTO = new PaymentDTO();
+                paymentDTO.setPaymentId(order.getPayment().getPaymentId());
+                paymentDTO.setPaymentMethod(order.getPayment().getPaymentMethod());
+                paymentDTO.setPgPaymentId(order.getPayment().getPgPaymentId());
+                paymentDTO.setPgStatus(order.getPayment().getPgStatus());
+                paymentDTO.setPgResponseMessage(order.getPayment().getPgResponseMessage());
+                dto.setPayment(paymentDTO);
+            }
+
+            // ✅ Order items mapping
+            List<OrderItemDTO> itemDTOs = new ArrayList<>();
+            for (OrderItem item : order.getOrderItems()) {
+                OrderItemDTO itemDTO = new OrderItemDTO();
+                itemDTO.setOrderItemId(item.getOrderItemId());
+                itemDTO.setPlacedQty(item.getPlacedQty());
+                itemDTO.setOrderedProductPrice(item.getOrderedProductPrice());
+                itemDTO.setDiscount(item.getDiscount());
+
+                // ✅ Product mapping
+                if (item.getProduct() != null) {
+                    ProductDTO productDTO = new ProductDTO();
+                    productDTO.setProductId(item.getProduct().getProductId());
+                    productDTO.setProductName(item.getProduct().getProductName());
+                    productDTO.setBrandName(item.getProduct().getBrandName());
+                    productDTO.setCategory(item.getProduct().getCategory());
+                    productDTO.setPrice(item.getProduct().getPrice());
+                    productDTO.setSpecialPrice(item.getProduct().getSpecialPrice());
+                    productDTO.setDiscount(item.getProduct().getDiscount());
+                    productDTO.setImageURL(item.getProduct().getImageURL());
+                    productDTO.setQuantity(item.getProduct().getQuantity());
+                    itemDTO.setProductDTO(productDTO);
+                }
+
+                itemDTOs.add(itemDTO);
+            }
+
+            dto.setOrderItems(itemDTOs);
+            orderDTOs.add(dto);
+        }
+
+        return orderDTOs;
     }
 
     @Override
