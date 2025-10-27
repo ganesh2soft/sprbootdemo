@@ -62,19 +62,13 @@ public class CartsController {
         return new ResponseEntity<>(cartDTO, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{cartId}/product/{productId}")
-    public ResponseEntity<MessageResponse> deleteProductFromCart(@PathVariable Long cartId,
-                                                                 @PathVariable Long productId) {
-        String status = cartsService.deleteProductFromCart(cartId, productId);
-        MessageResponse messageResponse = new MessageResponse(status);
-        return new ResponseEntity<>(messageResponse, HttpStatus.OK);
-    }
+    
     
     @DeleteMapping("/userrelated/cart/{email}/products")
     public ResponseEntity<MessageResponse> deleteProductsFromUserCart(
             @PathVariable String email,
             @RequestBody List<Long> productIds) {
-        
+
         logger.info("Cart deletion request for user: {}", email);
         logger.info("Product IDs to delete: {}", productIds);
 
@@ -85,9 +79,8 @@ public class CartsController {
 
         try {
             cartsService.deleteProductsFromUserCart(email, productIds);
-            return ResponseEntity.ok(new MessageResponse("Selected products removed from cart successfully"));
+            return ResponseEntity.ok(new MessageResponse("Selected products removed successfully"));
         } catch (ResourceNotFoundException rnfe) {
-            logger.warn("Resource not found during deleteProductsFromUserCart", rnfe);
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                  .body(new MessageResponse(rnfe.getMessage()));
         } catch (Exception e) {
@@ -96,6 +89,7 @@ public class CartsController {
                                  .body(new MessageResponse("Failed to remove products from cart"));
         }
     }
+
 
 
 }

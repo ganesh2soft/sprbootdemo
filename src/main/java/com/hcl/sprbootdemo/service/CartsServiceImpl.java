@@ -7,7 +7,11 @@ import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import com.hcl.sprbootdemo.entity.CartItem;
 import com.hcl.sprbootdemo.entity.Carts;
 import com.hcl.sprbootdemo.entity.Products;
@@ -16,6 +20,7 @@ import com.hcl.sprbootdemo.exception.APIException;
 import com.hcl.sprbootdemo.exception.ResourceNotFoundException;
 import com.hcl.sprbootdemo.payload.CartItemDTO;
 import com.hcl.sprbootdemo.payload.CartsDTO;
+import com.hcl.sprbootdemo.payload.MessageResponse;
 import com.hcl.sprbootdemo.payload.ProductDTO;
 import com.hcl.sprbootdemo.repository.CartItemRepository;
 import com.hcl.sprbootdemo.repository.CartsRepository;
@@ -155,36 +160,7 @@ public class CartsServiceImpl implements CartsService {
 	}
 
 
-	@Transactional
-	@Override
-	public String deleteProductFromCart(Long cartId, Long productId) {
-	    // 1. Find cart
-	    Carts cart = cartsRepository.findById(cartId).orElseThrow(
-	            () -> new ResourceNotFoundException(
-	                    String.format("Cart not found with ID: %d", cartId), cartId));
-
-	    // 2. Find cart item
-	    CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(cartId, productId);
-	    if (cartItem == null) {
-	        throw new ResourceNotFoundException(
-	                String.format("Product not found with ID: %d", productId), productId);
-	    }
-
-	    // 3. Optional: compute price if needed
-	    double itemTotal = cartItem.getProduct().getPrice() * cartItem.getPlacedQty();
-
-	    // 4. Remove the cart item
-	    cartItemRepository.delete(cartItem);
-
-	    // 5. Optional: recompute cart totalPrice if you store it in Cart
-	    // cart.setTotalPrice(cart.getCartItems().stream()
-	    //         .mapToDouble(ci -> ci.getProduct().getPrice() * ci.getPlacedQty())
-	    //         .sum());
-	    // cartsRepository.save(cart);
-
-	    return "Product " + cartItem.getProduct().getProductName() + " removed from the cart !!!";
-	}
-
+	
 	@Transactional
 	@Override
 	public CartsDTO updateProductQuantityInCart(Long productId, Integer quantityChange) {
@@ -223,7 +199,8 @@ public class CartsServiceImpl implements CartsService {
 	    }
 
 	    if (newPlacedQty == 0) {
-	        deleteProductFromCart(cart.getCartId(), productId);
+	        // Wrap the single product ID in a list
+	        deleteProductsFromUserCart(email, List.of(productId));
 	    } else {
 	        cartItem.setPlacedQty(newPlacedQty);
 	        cartItemRepository.save(cartItem);
@@ -245,29 +222,27 @@ public class CartsServiceImpl implements CartsService {
 	    return cartDTO;
 	}
 
-
-
-	@Override
 	@Transactional
+	@Override
 	public void deleteProductsFromUserCart(String email, List<Long> productIds) {
-	    // Fetch the user's cart
-	    Carts cart = cartsRepository.findByUserEmail(email)
-	            .orElseThrow(() -> new ResourceNotFoundException("Cart not found for user: " + email));
 
-	    // Remove CartItems associated with the specified product IDs
-	    List<CartItem> itemsToRemove = cart.getCartItems().stream()
-	            .filter(cartItem -> productIds.contains(cartItem.getProduct().getProductId()))
-	            .toList();
+	    // Fetch Cart entity
+	    Carts cart = cartsRepository.findCartByEmail(email);
+	    if (cart == null) {
+	        throw new ResourceNotFoundException("Cart not found for user: " + email);
+	    }
 
-	    cart.getCartItems().removeAll(itemsToRemove);
-
-	    // Delete CartItems from the repository
-	    cartItemRepository.deleteAll(itemsToRemove);
-
-	    // No need to update totalPrice on Cart anymore
-
-	    // Save the updated cart (with orphan removal)
-	    cartsRepository.save(cart);
+	    for (Long productId : productIds) {
+	        CartItem cartItem = cartItemRepository.findCartItemByProductIdAndCartId(cart.getCartId(), productId);
+	        if (cartItem != null) {
+	            cartItemRepository.deleteCartItemByProductIdAndCartId(cart.getCartId(), productId);
+	        } else {
+	            // Optional: just log, no exception
+	            logger.info("Product {} not found in cart {}, skipping deletion", productId, cart.getCartId());
+	        }
+	    }
 	}
+
+
 
 }
