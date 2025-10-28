@@ -14,11 +14,20 @@ public class PaymentDTO {
     private String customerName;
     private String paymentGateway;
     private Date createdAt;
+    private String paymentMethod;
 
     // 🔹 Optional: include orderId if you want
     private Long orderId;
 
-    // Getters and Setters
+    public String getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	// Getters and Setters
     public Long getPaymentId() {
         return paymentId;
     }
