@@ -49,40 +49,48 @@ public class StripePaymentServiceImpl extends StripePaymentServiceAbstract {
 
     @Override
     public PaymentDTO createStripePayment(StripePaymentDto stripePaymentDto, Long orderId) throws StripeException {
-        // 1️⃣ Set API key
         com.stripe.Stripe.apiKey = stripeApiKey;
 
-        // 2️⃣ Create PaymentIntent
         PaymentIntent paymentIntent = createPaymentIntent(stripePaymentDto);
 
-        // 3️⃣ Fetch the associated order
         Orders order = ordersRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId));
-        //
+
         Payments payment = new Payments();
         payment.setPaymentIntentId(paymentIntent.getId());
         payment.setAmount(stripePaymentDto.getAmount() / 100.0);
         payment.setCurrency(stripePaymentDto.getCurrency());
-        payment.setStatus(paymentIntent.getStatus());
+        payment.setStatus(paymentIntent.getStatus()); // e.g., requires_payment_method
         payment.setDescription(paymentIntent.getDescription());
         payment.setCustomerEmail(stripePaymentDto.getEmail());
         payment.setCustomerName(stripePaymentDto.getName());
         payment.setPaymentGateway("Stripe");
-        payment.setPaymentMethod("card"); // ✅ Set a non-null value
-        payment.setOrder(order); // link to order
+        payment.setPaymentMethod("card");
+        payment.setOrder(order);
 
         paymentRepository.save(payment);
-
-        // 5️⃣ Set payment reference in order
         order.setPayment(payment);
         ordersRepository.save(order);
 
-        // 6️⃣ Map to DTO and include orderId
-        PaymentDTO paymentDTO = modelMapper.map(payment, PaymentDTO.class);
-        paymentDTO.setOrderId(order.getOrderId());
+        // Map to PaymentDTO
+        PaymentDTO dto = new PaymentDTO();
+        dto.setPaymentId(payment.getPaymentId());
+        dto.setOrderId(order.getOrderId());
+        dto.setPaymentMethod(payment.getPaymentMethod());
+        dto.setPgPaymentId(payment.getPaymentIntentId());
+        dto.setPgName(payment.getPaymentGateway());
+        dto.setPgResponseMessage(payment.getStatus()); // Stripe status
+        dto.setPgStatus(payment.getStatus().equals("succeeded") ? "Success" : "Failed");
+        dto.setDescription(payment.getDescription());
+        dto.setAmount(payment.getAmount());
+        dto.setCurrency(payment.getCurrency());
+        dto.setCustomerEmail(payment.getCustomerEmail());
+        dto.setCustomerName(payment.getCustomerName());
 
-        return paymentDTO;
+        return dto;
+
     }
+
 
     @Override
     protected PaymentIntent createPaymentIntent(StripePaymentDto stripePaymentDto) throws StripeException {

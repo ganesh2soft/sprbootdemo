@@ -1,33 +1,22 @@
 package com.hcl.sprbootdemo.payload;
 
-import java.util.Date;
-
 public class PaymentDTO {
 
     private Long paymentId;
-    private String paymentIntentId;
+    private String paymentMethod;        // e.g., "Card", "UPI", etc.
+    private String pgPaymentId;          // Payment Gateway ID (Stripe PaymentIntent ID)
+    private String pgName;               // Payment Gateway Name (Stripe)
+    private String pgResponseMessage;    // e.g., Stripe status
+    private String pgStatus;             // Success / Failed
+    private String description;
     private Double amount;
     private String currency;
-    private String status;
-    private String description;
-    private String customerEmail;
     private String customerName;
-    private String paymentGateway;
-    private Date createdAt;
-    private String paymentMethod;
-
-    // 🔹 Optional: include orderId if you want
+    private String customerEmail;
     private Long orderId;
 
-    public String getPaymentMethod() {
-		return paymentMethod;
-	}
+    // Getters and Setters
 
-	public void setPaymentMethod(String paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
-
-	// Getters and Setters
     public Long getPaymentId() {
         return paymentId;
     }
@@ -36,12 +25,52 @@ public class PaymentDTO {
         this.paymentId = paymentId;
     }
 
-    public String getPaymentIntentId() {
-        return paymentIntentId;
+    public String getPaymentMethod() {
+        return paymentMethod;
     }
 
-    public void setPaymentIntentId(String paymentIntentId) {
-        this.paymentIntentId = paymentIntentId;
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getPgPaymentId() {
+        return pgPaymentId;
+    }
+
+    public void setPgPaymentId(String pgPaymentId) {
+        this.pgPaymentId = pgPaymentId;
+    }
+
+    public String getPgName() {
+        return pgName;
+    }
+
+    public void setPgName(String pgName) {
+        this.pgName = pgName;
+    }
+
+    public String getPgResponseMessage() {
+        return pgResponseMessage;
+    }
+
+    public void setPgResponseMessage(String pgResponseMessage) {
+        this.pgResponseMessage = pgResponseMessage;
+    }
+
+    public String getPgStatus() {
+        return pgStatus;
+    }
+
+    public void setPgStatus(String pgStatus) {
+        this.pgStatus = pgStatus;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Double getAmount() {
@@ -60,30 +89,6 @@ public class PaymentDTO {
         this.currency = currency;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getCustomerEmail() {
-        return customerEmail;
-    }
-
-    public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
-    }
-
     public String getCustomerName() {
         return customerName;
     }
@@ -92,20 +97,12 @@ public class PaymentDTO {
         this.customerName = customerName;
     }
 
-    public String getPaymentGateway() {
-        return paymentGateway;
+    public String getCustomerEmail() {
+        return customerEmail;
     }
 
-    public void setPaymentGateway(String paymentGateway) {
-        this.paymentGateway = paymentGateway;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
     }
 
     public Long getOrderId() {
