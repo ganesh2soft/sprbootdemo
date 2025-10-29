@@ -1,6 +1,7 @@
 package com.hcl.sprbootdemo.entity;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 @Entity
@@ -13,7 +14,7 @@ public class Payments {
 
     private String paymentIntentId;
 
-    private String paymentMethod; // 🔹 New field
+    private String paymentMethod; // Payment method (CARD, etc.)
 
     private Double amount;
     private String currency;
@@ -23,13 +24,22 @@ public class Payments {
     private String customerName;
     private String paymentGateway;
 
+    // ✅ Proper timestamp handling
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt = new Date();
+    @Column(name = "created_at", updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
+    private Date createdAt;
 
     // 🔹 Link to Order (optional)
     @OneToOne
     @JoinColumn(name = "order_id")
     private Orders order;
+
+    // ✅ PrePersist to set createdAt automatically
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
+    }
 
     // 🔹 Getters and Setters
     public Long getPaymentId() { return paymentId; }

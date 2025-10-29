@@ -77,16 +77,17 @@ public class StripePaymentServiceImpl extends StripePaymentServiceAbstract {
         dto.setPaymentId(payment.getPaymentId());
         dto.setOrderId(order.getOrderId());
         dto.setPaymentMethod(payment.getPaymentMethod());
-        dto.setPgPaymentId(payment.getPaymentIntentId());
-        dto.setPgName(payment.getPaymentGateway());
+        dto.setPaymentIntentId(payment.getPaymentIntentId());      
+        dto.setPaymentGateway(payment.getPaymentGateway());
         dto.setPgResponseMessage(payment.getStatus()); // Stripe status
-        dto.setPgStatus(payment.getStatus().equals("succeeded") ? "Success" : "Failed");
+        dto.setStatus(payment.getStatus());
+        
         dto.setDescription(payment.getDescription());
         dto.setAmount(payment.getAmount());
         dto.setCurrency(payment.getCurrency());
         dto.setCustomerEmail(payment.getCustomerEmail());
         dto.setCustomerName(payment.getCustomerName());
-
+        System.out.println(dto);
         return dto;
 
     }

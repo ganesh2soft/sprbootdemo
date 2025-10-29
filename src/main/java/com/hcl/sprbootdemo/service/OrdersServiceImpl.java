@@ -114,15 +114,61 @@ public class OrdersServiceImpl implements OrdersService {
         return convertToDTO(order);
     }
 
-    // 🔁 Helper: Entity → DTO mapping
     private OrderDTO convertToDTO(Orders order) {
+        // Map basic Order fields
         OrderDTO dto = modelMapper.map(order, OrderDTO.class);
 
-        // Ensure payment mapping if present
+        // Map payment if it exists
         if (order.getPayment() != null) {
-            dto.setPayment(modelMapper.map(order.getPayment(), PaymentDTO.class));
+            PaymentDTO paymentDTO = new PaymentDTO();
+            Payments payment = order.getPayment();
+
+            paymentDTO.setPaymentId(payment.getPaymentId());
+            paymentDTO.setPaymentMethod(payment.getPaymentMethod());
+            paymentDTO.setPaymentIntentId(payment.getPaymentIntentId());
+            paymentDTO.setPaymentGateway(payment.getPaymentGateway());
+            paymentDTO.setDescription(payment.getDescription());
+            paymentDTO.setAmount(payment.getAmount());
+            paymentDTO.setCurrency(payment.getCurrency());
+            paymentDTO.setCustomerName(payment.getCustomerName());
+            paymentDTO.setCustomerEmail(payment.getCustomerEmail());
+            paymentDTO.setStatus(payment.getStatus());
+            paymentDTO.setOrderId(payment.getOrder() != null ? payment.getOrder().getOrderId() : null);
+            // If you want createdAt, you can add it in PaymentDTO as well
+
+            dto.setPayment(paymentDTO);
+        }
+
+        // Map OrderItems
+        if (order.getOrderItems() != null) {
+            List<OrderItemDTO> orderItemDTOs = order.getOrderItems().stream().map(item -> {
+                OrderItemDTO itemDTO = new OrderItemDTO();
+
+                itemDTO.setOrderItemId(item.getOrderItemId());
+                itemDTO.setPlacedQty(item.getPlacedQty());
+                itemDTO.setDiscount(item.getDiscount());
+                itemDTO.setOrderedProductPrice(item.getOrderedProductPrice());
+
+                // Map Product → ProductDTO
+                if (item.getProduct() != null) {
+                    ProductDTO productDTO = new ProductDTO();
+                    productDTO.setProductId(item.getProduct().getProductId());
+                    productDTO.setProductName(item.getProduct().getProductName());
+                    productDTO.setBrandName(item.getProduct().getBrandName());
+                    productDTO.setImageURL(item.getProduct().getImageURL());
+                    productDTO.setPrice(item.getProduct().getPrice());
+                    // Add other fields as needed
+
+                    itemDTO.setProductDTO(productDTO);
+                }
+
+                return itemDTO;
+            }).collect(Collectors.toList());
+
+            dto.setOrderItems(orderItemDTOs);
         }
 
         return dto;
     }
+
 }
